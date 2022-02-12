@@ -227,7 +227,11 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during test mode. */
   @Override
   public void testPeriodic() {
-    Auto.recordSequence("xInputTestAuto", m_DriveController.getLeftY());
-    Auto.recordSequence("yInputTestAuto", m_DriveController.getRightX());
+    
+    if(SmartDashboard.getString("AutoName", "") != ""){
+      Auto.recordSequence(SmartDashboard.getString("AutoName", "") + "X", m_DriveController.getLeftY());
+      Auto.recordSequence(SmartDashboard.getString("AutoName", "") + "Y", m_DriveController.getRightX());
+    }
+    
   }
 }
