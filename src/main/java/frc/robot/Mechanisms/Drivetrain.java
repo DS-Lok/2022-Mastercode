@@ -48,7 +48,9 @@ public class Drivetrain {
       right = new MotorControllerGroup(m_RightMotorFour, m_RightMotorFive, m_RightMotorSix);
       left = new MotorControllerGroup(m_leftMotorOne, m_leftMotorTwo, m_leftMotorThree);
 
-      drive = new DifferentialDrive(left, right);
+      left.setInverted(true);
+
+      drive = new DifferentialDrive(right, left);
 
 
      
@@ -59,7 +61,7 @@ public class Drivetrain {
     @SuppressWarnings("ParameterName")
     public void drive(double speed, double rotation) {
 
-      drive.arcadeDrive(speed, rotation);
+      drive.arcadeDrive(speed, rotation*.65);
 
     }
 
