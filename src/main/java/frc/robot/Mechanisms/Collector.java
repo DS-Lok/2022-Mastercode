@@ -13,11 +13,11 @@ import frc.robot.Robot;
 
 public class Collector {
     
-    private final DoubleSolenoid m_LeftPiston;
-    private final DoubleSolenoid m_RightPiston;
+    private  DoubleSolenoid m_LeftPiston;
+    private DoubleSolenoid m_RightPiston;
 
 
-    private final CANSparkMax m_collectorNeo;
+    private  CANSparkMax m_collectorNeo;
 
     private RelativeEncoder m_encoder;
     private SparkMaxPIDController m_pidController;
@@ -77,6 +77,15 @@ public class Collector {
 
 
     public void run(Boolean On) {
+        
+        if (On) {
+            m_collectorNeo.set(.5);
+        } else if (!On) {
+            m_collectorNeo.set(0);
+
+        }
+
+        /*
         double defaultSpeed = 1807; //placeholderValue
         double Speed;
         //if (defaultSpeed < neededSpeed(m_drive.Speed())){
@@ -85,7 +94,7 @@ public class Collector {
 
         if (On = true) {
      //   m_pidController.setReference(Speed, CANSparkMax.ControlType.kVelocity); 
-        }
+        }*/
     }
 
     public double neededSpeed(double DriveTrainSpeed) {

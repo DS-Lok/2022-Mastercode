@@ -12,7 +12,9 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.Mechanisms.Climb;
 import frc.robot.Mechanisms.Collector;
+import frc.robot.Mechanisms.Compress;
 import frc.robot.Mechanisms.Drivetrain;
 import frc.robot.Mechanisms.Indexer;
 import frc.robot.Mechanisms.Shooter;
@@ -32,24 +34,16 @@ public class Robot extends TimedRobot {
   private final SendableChooser<String> m_chooser = new SendableChooser<>();
 
 
-  //public final Drivetrain m_Drive = new Drivetrain();
-  //private final Collector m_Collector = new Collector();
+  public Drivetrain m_Drive = new Drivetrain();
+  public Collector m_Collector = new Collector();
+  public Indexer m_Indexer = new Indexer();
+  public Compress m_Compress = new Compress();
+
   //private final Shooter m_shooter = new Shooter();
   //private final Indexer m_indexer = new Indexer();
 
-   WPI_TalonFX m_leftMotorOne;
-   WPI_TalonFX m_leftMotorTwo;
-   WPI_TalonFX m_leftMotorThree;
-
-   WPI_TalonFX m_RightMotorFour;
-   WPI_TalonFX m_RightMotorFive;
-   WPI_TalonFX m_RightMotorSix;
-  
-   WPI_TalonFX m_Evan;
-
   private XboxController m_DriveController;
   private XboxController m_OperatController;
-
 
   static int autoSection;
 
@@ -67,25 +61,8 @@ public class Robot extends TimedRobot {
 
     m_DriveController = new XboxController(0);
     m_OperatController = new XboxController(1);
-    
-    m_leftMotorOne = new WPI_TalonFX(1);
-    m_leftMotorTwo = new WPI_TalonFX(2);
-    m_leftMotorThree = new WPI_TalonFX(3);
-
-    m_RightMotorFour = new WPI_TalonFX(4);
-    m_RightMotorFive = new WPI_TalonFX(5);
-    m_RightMotorSix = new WPI_TalonFX(6);
-
-    m_Evan = new WPI_TalonFX(7);
-
-    m_leftMotorOne.setNeutralMode(NeutralMode.Coast);
-    m_leftMotorTwo.setNeutralMode(NeutralMode.Coast);
-    m_leftMotorThree.setNeutralMode(NeutralMode.Coast);
-    
-    m_RightMotorFour.setNeutralMode(NeutralMode.Coast);
-    m_RightMotorFive.setNeutralMode(NeutralMode.Coast);
-    m_RightMotorSix.setNeutralMode(NeutralMode.Coast);
-
+  
+    //Climb.initClimb(false);
   }
 
   /**
@@ -158,48 +135,9 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
-    //m_Drive.drive(m_DriveController.getLeftY(), m_DriveController.getRightX());
-
-    if (m_DriveController.getAButton()) {
-      m_leftMotorOne.set(ControlMode.PercentOutput, .3);
-    } else if (!m_DriveController.getAButton()) {
-      m_leftMotorOne.set(ControlMode.PercentOutput, 0);
-    }
-
-
-
-    if (m_DriveController.getBButton()) {
-      m_leftMotorTwo.set(ControlMode.PercentOutput, .3);
-    } else if (!m_DriveController.getBButton()) {
-      m_leftMotorTwo.set(ControlMode.PercentOutput, 0);
-    }
-
-
-    if (m_DriveController.getXButton()) {
-      m_leftMotorThree.set(ControlMode.PercentOutput, .3);
-    } else if (!m_DriveController.getXButton()) {
-      m_leftMotorThree.set(ControlMode.PercentOutput, 0);
-    }
-
-
-
-    if (m_DriveController.getYButton()) {
-      m_RightMotorFour.set(ControlMode.PercentOutput, .3);
-    } else if (!m_DriveController.getYButton()) {
-      m_RightMotorFour.set(ControlMode.PercentOutput, 0);
-    }
-
-    if (m_DriveController.getLeftBumper()) {
-      m_RightMotorFive.set(ControlMode.PercentOutput, .3);
-    } else if (!m_DriveController.getLeftBumper()) {
-      m_RightMotorFive.set(ControlMode.PercentOutput, 0);
-    }
-
-    if (m_DriveController.getRightBumper()) {
-      m_RightMotorSix.set(ControlMode.PercentOutput, .3);
-    } else if (!m_DriveController.getRightBumper()) {
-      m_RightMotorSix.set(ControlMode.PercentOutput, 0);
-    }
+  m_Drive.drive(m_DriveController.getLeftY(), m_DriveController.getRightX());
+  m_Collector.run(m_OperatController.getAButton());
+  m_Compress.run();
 
 /*
     if (m_DriveController.getRightBumper()) {
