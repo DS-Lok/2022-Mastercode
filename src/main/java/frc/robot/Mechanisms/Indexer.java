@@ -58,21 +58,38 @@ public void i_UltraSonic(){
 iUltrasonic1.setAutomaticMode(true);
 iUltrasonic2.setAutomaticMode(true);
 
+//Status while collecting 
 
-//Setting Status 
+
+
+//Setting Status after ollected 
 if(iUltrasonic1.getRangeInches() > 2 && !(iUltrasonic2.getRangeInches() > 2)){
     IndexStatus = true;
 }else if(iUltrasonic2.getRangeInches() > 2){
     IndexStatus = false;
 }
 
-if(IndexStatus){
+if(IndexStatus = true){
     indexerWheel.set(0.4);
 }else{
     indexerWheel.set(0);
 }
 
 }
+
+
+
+public void index(Boolean go){
+    
+    if(go){
+        i_UltraSonic();
+        ColorSensor();
+    }
+
+
+}
+
+ }
 
   
  
@@ -90,4 +107,4 @@ if(IndexStatus){
 
 
 
-}
+

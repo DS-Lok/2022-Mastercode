@@ -8,8 +8,6 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
-import edu.wpi.first.wpilibj.Compressor;
-import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -48,7 +46,6 @@ public class Robot extends TimedRobot {
   private XboxController m_OperatController;
 
   static int autoSection;
-  Compressor COMPY;
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -60,7 +57,7 @@ public class Robot extends TimedRobot {
     m_chooser.addOption("My Auto", kCustomAuto);
     SmartDashboard.putData("Auto choices", m_chooser);
 
-    COMPY = new Compressor(14,PneumaticsModuleType.REVPH);
+    
 
     m_DriveController = new XboxController(0);
     m_OperatController = new XboxController(1);
@@ -140,7 +137,8 @@ public class Robot extends TimedRobot {
   public void teleopPeriodic() {
   m_Drive.drive(m_DriveController.getLeftY(), m_DriveController.getRightX());
   m_Collector.run(m_OperatController.getAButton());
-  m_Compress.run(COMPY);
+  m_Indexer.index(m_OperatController.getAButton());
+  m_Compress.run();
 
 /*
     if (m_DriveController.getRightBumper()) {
