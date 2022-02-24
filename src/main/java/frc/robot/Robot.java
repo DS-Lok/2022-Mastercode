@@ -8,6 +8,8 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
+import edu.wpi.first.wpilibj.Compressor;
+import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -38,6 +40,7 @@ public class Robot extends TimedRobot {
   public Collector m_Collector = new Collector();
   public Indexer m_Indexer = new Indexer();
   public Compress m_Compress = new Compress();
+  Compressor m_Compy;
 
   //private final Shooter m_shooter = new Shooter();
   //private final Indexer m_indexer = new Indexer();
@@ -62,6 +65,7 @@ public class Robot extends TimedRobot {
     m_DriveController = new XboxController(0);
     m_OperatController = new XboxController(1);
   
+    m_Compy = new Compressor(14, PneumaticsModuleType.REVPH);  
     //Climb.initClimb(false);
   }
 
@@ -138,7 +142,7 @@ public class Robot extends TimedRobot {
   m_Drive.drive(m_DriveController.getLeftY(), m_DriveController.getRightX());
   m_Collector.run(m_OperatController.getAButton());
   m_Indexer.index(m_OperatController.getAButton());
-  m_Compress.run();
+  m_Compress.run(m_Compy);
 
 /*
     if (m_DriveController.getRightBumper()) {
