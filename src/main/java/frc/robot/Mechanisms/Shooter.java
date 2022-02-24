@@ -20,6 +20,9 @@ public class Shooter {
         m_rightMotor.configFactoryDefault();
         m_leftMotor.configFactoryDefault();
 
+        m_leftMotor.setInverted(true);
+        //m_leftMotor.follow(m_rightMotor);
+
        // m_rightMotor.setInverted(true); will probably need to invert one of the motors. I want positive to be shooting forward for both
 
 
