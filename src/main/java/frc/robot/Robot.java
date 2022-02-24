@@ -137,6 +137,7 @@ public class Robot extends TimedRobot {
   public void teleopPeriodic() {
   m_Drive.drive(m_DriveController.getLeftY(), m_DriveController.getRightX());
   m_Collector.run(m_OperatController.getAButton());
+  m_Indexer.index(m_OperatController.getAButton());
   m_Compress.run();
 
 /*
