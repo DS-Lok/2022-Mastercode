@@ -18,20 +18,28 @@ public class Indexer {
     private ColorSensorV3 m_colorS = new ColorSensorV3(i2cPort);
     private ColorMatch m_colorMatch = new ColorMatch();
     //Color targeting
-    private Color kBluetarget = new Color(0, 0, 0.75);
+    private Color kBluetarget = new Color(0, 0, 0.5);
     private Color kRedtarget = new Color(0.5, 0, 0);
 
     //UltraSonics 
-    private Ultrasonic iUltrasonic1 = new Ultrasonic(1, 2);
-    private Ultrasonic iUltrasonic2 = new Ultrasonic(3, 4);
+    private Ultrasonic iUltrasonic1 = new Ultrasonic(5, 4);
+    private Ultrasonic iUltrasonic2 = new Ultrasonic(3, 2);
     boolean IndexStatus = false;
     //Motor
     WPI_TalonSRX indexerWheel; 
+
+    boolean HARDSTOP;
+
+
+
 //Indexer Object 
 public Indexer(){
     indexerWheel = new WPI_TalonSRX(13);
 
 }
+
+
+
 
 
 //Color Sensor Method 
@@ -54,47 +62,69 @@ if(match.color == kBluetarget){
 SmartDashboard.putNumber("Red",detectedColor.red);
 SmartDashboard.putNumber("Blue", detectedColor.blue);
 SmartDashboard.putString("Color", colorString);
-
-
 }
+
+
+
+
 
 //UltraSonic Method 
 public void i_UltraSonic(){
 iUltrasonic1.setAutomaticMode(true);
 iUltrasonic2.setAutomaticMode(true);
+SmartDashboard.putNumber("BOTTOM SENSOR", iUltrasonic1.getRangeInches());
+SmartDashboard.putNumber("TOP SENSOR", iUltrasonic2.getRangeInches());
 
-//Status while collecting 
 
-
-
-//Setting Status after ollected 
-if(iUltrasonic1.getRangeInches() > 2 && !(iUltrasonic2.getRangeInches() > 2)){
+//Setting Status after collected 
+if(iUltrasonic1.getRangeInches() < 7 && !(iUltrasonic2.getRangeInches() > 7)){
     IndexStatus = true;
-}else if(iUltrasonic2.getRangeInches() > 2){
+}else if(iUltrasonic2.getRangeInches() < 7){
     IndexStatus = false;
 }
-
-if(IndexStatus = true){
-    indexerWheel.set(0.4);
-}else{
-    indexerWheel.set(0);
-}
+if(iUltrasonic1.getRangeInches() < 7 && iUltrasonic2.getRangeInches() < 7){
+    HARDSTOP = true;
 
 }
+else{
+    HARDSTOP = false;
+}
+SmartDashboard.putBoolean("HARDSTOP", HARDSTOP);
+}
 
 
 
-public void index(Boolean go){
+
+public void COLLECT(Boolean RUN, Boolean OTHER){
+    if((RUN | IndexStatus)  && !HARDSTOP){
+        indexerWheel.set(-0.4);
+    }
+    else if(OTHER){
+        indexerWheel.set(0.4);
+    }
+    else{
+        indexerWheel.set(0);
+    }
+}
+
+
+
+
+
+
     
-    if(go){
+
+
+
+
+
+public void index(){
+
         i_UltraSonic();
         ColorSensor();
-    }
-
-
 }
 
- }
+}
 
   
  

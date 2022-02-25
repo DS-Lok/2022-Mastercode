@@ -9,11 +9,12 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Robot;
 
 public class Collector {
     
-    private  DoubleSolenoid m_LeftPiston = new DoubleSolenoid(PneumaticsModuleType.REVPH, 1, 0);
+    private  DoubleSolenoid m_LeftPiston;
     
     //private DoubleSolenoid m_RightPiston = new DoubleSolenoid(PneumaticsModuleType.REVPH, 1, 0);
 
@@ -33,7 +34,8 @@ public class Collector {
 
     public Collector() {
 
-
+        m_LeftPiston = new DoubleSolenoid(PneumaticsModuleType.REVPH, 0, 1);
+    
 
         m_collectorNeo = new CANSparkMax(11, MotorType.kBrushless);
 
@@ -59,40 +61,33 @@ public class Collector {
 
     }
 
-    public void dropped(boolean pistonsOut) { //true is pistons out, false is not
-        if (pistonsOut = true) {
+    public void dropped(boolean pistonsOut, boolean other) { //true is pistons out, false is not
+        
+        if (pistonsOut || other) {
             m_LeftPiston.set(Value.kForward);
            // m_RightPiston.set(Value.kForward);
 
             //possibly setting kOff will depresurize them and give them compressability?
 
-        } else if (pistonsOut = false) {
+        } else if (!pistonsOut || other) {
             m_LeftPiston.set(Value.kReverse);
             //m_RightPiston.set(Value.kReverse);
         }
     } 
 
 
-    public void run(Boolean On) {
-        
-        if (On) {
-            m_collectorNeo.set(.5);
-        } else if (!On) {
-            m_collectorNeo.set(0);
-
+    public void COLLECT(Boolean Dump, Boolean Collect) {
+        if (Collect) {
+            m_collectorNeo.set(.3);
+        } else if (Dump) {
+            
+            m_collectorNeo.set(-.3);
         }
-
-        /*
-        double defaultSpeed = 1807; //placeholderValue
-        double Speed;
-        //if (defaultSpeed < neededSpeed(m_drive.Speed())){
-          //  Speed = neededSpeed(m_drive.Speed());
-      //  } else {Speed = defaultSpeed;}
-
-        if (On = true) {
-     //   m_pidController.setReference(Speed, CANSparkMax.ControlType.kVelocity); 
-        }*/
+        else{
+            m_collectorNeo.set(0);
+        }
     }
+
   
 
     public double neededSpeed(double DriveTrainSpeed) {

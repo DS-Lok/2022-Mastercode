@@ -9,7 +9,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class Compress {
     public void run(Compressor COMPY){
         SmartDashboard.putNumber("Pressure Switch Value", COMPY.getPressure());
-        COMPY.enableAnalog(30,120);
+        COMPY.enableAnalog(60,120);
 
         //Pnuematics Ports
         //5/4 = climb
