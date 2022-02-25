@@ -13,8 +13,9 @@ import frc.robot.Robot;
 
 public class Collector {
     
-    private  DoubleSolenoid m_LeftPiston;
-    private DoubleSolenoid m_RightPiston;
+    private  DoubleSolenoid m_LeftPiston = new DoubleSolenoid(PneumaticsModuleType.REVPH, 1, 0);
+    
+    //private DoubleSolenoid m_RightPiston = new DoubleSolenoid(PneumaticsModuleType.REVPH, 1, 0);
 
 
     private  CANSparkMax m_collectorNeo;
@@ -31,8 +32,7 @@ public class Collector {
 
 
     public Collector() {
-        m_LeftPiston = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, 0, 1);
-        m_RightPiston = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, 2, 3);
+
 
 
         m_collectorNeo = new CANSparkMax(11, MotorType.kBrushless);
@@ -57,23 +57,20 @@ public class Collector {
 
         m_collectorNeo.setIdleMode(IdleMode.kCoast);
 
-
     }
 
     public void dropped(boolean pistonsOut) { //true is pistons out, false is not
         if (pistonsOut = true) {
             m_LeftPiston.set(Value.kForward);
-            m_RightPiston.set(Value.kForward);
+           // m_RightPiston.set(Value.kForward);
 
             //possibly setting kOff will depresurize them and give them compressability?
-            m_LeftPiston.set(Value.kOff); 
-            m_RightPiston.set(Value.kOff);
 
         } else if (pistonsOut = false) {
             m_LeftPiston.set(Value.kReverse);
-            m_RightPiston.set(Value.kReverse);
+            //m_RightPiston.set(Value.kReverse);
         }
-    }
+    } 
 
 
     public void run(Boolean On) {
@@ -96,6 +93,7 @@ public class Collector {
      //   m_pidController.setReference(Speed, CANSparkMax.ControlType.kVelocity); 
         }*/
     }
+  
 
     public double neededSpeed(double DriveTrainSpeed) {
       

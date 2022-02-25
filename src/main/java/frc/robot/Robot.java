@@ -9,6 +9,7 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
 import edu.wpi.first.wpilibj.Compressor;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
@@ -35,11 +36,14 @@ public class Robot extends TimedRobot {
   private String m_autoSelected;
   private final SendableChooser<String> m_chooser = new SendableChooser<>();
 
+  String teamColor;
 
   public Drivetrain m_Drive = new Drivetrain();
   public Collector m_Collector = new Collector();
   public Indexer m_Indexer = new Indexer();
   public Compress m_Compress = new Compress();
+  public Shooter m_Shooter = new Shooter();
+  
   Compressor m_Compy;
 
   //private final Shooter m_shooter = new Shooter();
@@ -48,6 +52,8 @@ public class Robot extends TimedRobot {
   private XboxController m_DriveController;
   private XboxController m_OperatController;
 
+  int ShootMode;
+  Boolean Shoot;
   static int autoSection;
 
   /**
@@ -60,7 +66,8 @@ public class Robot extends TimedRobot {
     m_chooser.addOption("My Auto", kCustomAuto);
     SmartDashboard.putData("Auto choices", m_chooser);
 
-    
+    //teamColor = DriverStation.getAlliance().name();
+    //SmartDashboard.putString("Team", teamColor);
 
     m_DriveController = new XboxController(0);
     m_OperatController = new XboxController(1);
@@ -139,9 +146,26 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
+
+  if (m_OperatController.getBButton()) {ShootMode = 0;}
+  else if (m_OperatController.getXButton()) {ShootMode = 1;}
+  else if (m_OperatController.getYButton()) {ShootMode = 2;}
+  else if (m_OperatController.getAButton()) {ShootMode = 3;}
+  else {ShootMode = 4;}
+  m_Shooter.flywheelRev(ShootMode);
+  if (m_OperatController.getRightTriggerAxis() >= .5) {Shoot = true;}
+  else {Shoot = false;}
+  m_Shooter.feed(Shoot);
+
   m_Drive.drive(m_DriveController.getLeftY(), m_DriveController.getRightX());
-  m_Collector.run(m_OperatController.getAButton());
-  m_Indexer.index(m_OperatController.getAButton());
+  m_Drive.brake(m_DriveController.getAButton());
+
+  m_Indexer.index(m_OperatController.getLeftBumper());
+
+  m_Collector.run(m_OperatController.getRightBumper());
+  m_Collector.dropped(m_OperatController.getRightBumper());;
+  
+
   m_Compress.run(m_Compy);
 
 /*
