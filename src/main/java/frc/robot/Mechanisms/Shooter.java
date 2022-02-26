@@ -16,6 +16,12 @@ public class Shooter {
     TalonFXConfiguration configs;
     WPI_TalonSRX m_feeder;
 
+    double kP = 0.00015;
+    double kI = 0;
+    double kD = 0;
+    double kF = .025;
+
+
     public Shooter() {
         m_leftMotor = new WPI_TalonFX(7);
         m_rightMotor = new WPI_TalonFX(8);
@@ -23,12 +29,12 @@ public class Shooter {
         m_rightMotor.configFactoryDefault();
         m_leftMotor.configFactoryDefault();
 
-        m_rightMotor.setInverted(true);
 
-
+        
 
         configs = new TalonFXConfiguration();
 
+       
 
         configs.primaryPID.selectedFeedbackSensor = FeedbackDevice.IntegratedSensor;
 
@@ -36,7 +42,19 @@ public class Shooter {
         m_rightMotor.configAllSettings(configs);
 
 
-        
+           
+        m_leftMotor.config_kP(0, kP);
+        m_leftMotor.config_kI(0, kI);
+        m_leftMotor.config_kD(0, kD);
+        m_leftMotor.config_kF(0, kF);
+
+        m_rightMotor.config_kP(0, kP);
+        m_rightMotor.config_kI(0, kI);
+        m_rightMotor.config_kD(0, kD);
+        m_rightMotor.config_kF(0, kF);
+        m_rightMotor.setInverted(true);
+
+     
 
         //m_leftMotor.follow(m_rightMotor);
 
@@ -67,21 +85,21 @@ public class Shooter {
                 m_leftMotor.set(TalonFXControlMode.PercentOutput, .5);
                 break;
 
-            case 1:
+            case 90:
                 m_leftMotor.set(TalonFXControlMode.Velocity, 1807);
                 m_rightMotor.set(TalonFXControlMode.Velocity, 1807);
                 break;
             
-            case 2:
+            case 180:
                 m_leftMotor.set(TalonFXControlMode.Velocity, speedForDistance());
                 m_rightMotor.set(TalonFXControlMode.Velocity, speedForDistance());
                 break;
-            case 3:
+            case 270:
                 m_leftMotor.set(TalonFXControlMode.Velocity,500);
                 m_rightMotor.set(TalonFXControlMode.Velocity, 500);
                 break;
-
-            case 4:
+ 
+            case -1:
                 m_rightMotor.set(ControlMode.PercentOutput, 0);
                 m_leftMotor.set(ControlMode.PercentOutput, 0);
                 break;
