@@ -134,7 +134,7 @@ public class Robot extends TimedRobot {
   m_Indexer.COLLECT(m_OperatController.getRightBumper(), m_OperatController.getLeftBumper());
   
 
-  //m_Collector.COLLECT(m_OperatController.getLeftBumper(), m_OperatController.getRightBumper());
+  m_Collector.COLLECT(m_OperatController.getLeftBumper(), m_OperatController.getRightBumper());
   m_Collector.dropped(m_OperatController.getRightBumper(), m_OperatController.getLeftBumper());
   
   m_Compress.run(m_Compy);
