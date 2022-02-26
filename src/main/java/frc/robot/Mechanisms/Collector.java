@@ -36,7 +36,7 @@ public class Collector {
 
 
 
-    public Collector(PneumaticsControlModule PCM) {
+    public Collector() {
 
 
 
@@ -69,7 +69,7 @@ public class Collector {
     public void COLLECT(Boolean Dump, Boolean Collect) {
         if (Collect) {
             SmartDashboard.putBoolean("Collecting", Collect);
-            collectorMotor.set(.5);
+            collectorMotor.set(.3);
         } else if (Dump) {
             
             collectorMotor.set(ControlMode.PercentOutput,-.3);

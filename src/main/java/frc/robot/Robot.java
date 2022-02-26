@@ -36,14 +36,15 @@ public class Robot extends TimedRobot {
 
 
   private final DoubleSolenoid m_doubleSolenoid = new DoubleSolenoid(14, PneumaticsModuleType.REVPH, 0, 1);
-
-   PneumaticsControlModule PCM = new PneumaticsControlModule(14);
+  private final DoubleSolenoid m_climbSolenoid = new DoubleSolenoid(14, PneumaticsModuleType.REVPH, 4, 5);
+   
 
   public Drivetrain m_Drive = new Drivetrain();
-  public Collector m_Collector = new Collector(PCM);
+  public Collector m_Collector = new Collector();
   public Indexer m_Indexer = new Indexer();
   public Compress m_Compress = new Compress();
   public Shooter m_Shooter = new Shooter();
+  public Climb m_Climb = new Climb();
   
   Ultrasonic test;
 
@@ -76,7 +77,8 @@ public class Robot extends TimedRobot {
     m_OperatController = new XboxController(1);
     
     
-    
+    m_climbSolenoid.set(Value.kReverse);
+    m_doubleSolenoid.set(Value.kForward);
     m_Compy = new Compressor(14, PneumaticsModuleType.REVPH);  
     //Climb.initClimb(false);
   }
@@ -129,9 +131,10 @@ public class Robot extends TimedRobot {
   
   @Override
   public void teleopInit() {
-    m_Collector.dropped(false, false, m_doubleSolenoid);
+    //m_Collector.dropped(false, false, m_doubleSolenoid);
     ALLIANCE = DriverStation.getAlliance().name();
     SmartDashboard.putString("Alliance", ALLIANCE);
+    m_Indexer.setIndex();
   }
 
   @Override
@@ -150,14 +153,15 @@ public class Robot extends TimedRobot {
   else TAKE = false;
   m_Shooter.feed(Shoot, TAKE);
 
-  m_Indexer.index();
-  m_Indexer.COLLECT(m_OperatController.getRightBumper(), m_OperatController.getLeftBumper());
-  BALLCOLOR = m_Indexer.ColorSensor();
+ m_Indexer.index();
+ m_Indexer.COLLECT(m_OperatController.getRightBumper(), m_OperatController.getLeftBumper());
+ BALLCOLOR = m_Indexer.ColorSensor();
 
   m_Collector.COLLECT(m_OperatController.getLeftBumper(), m_OperatController.getRightBumper());
-  m_Collector.dropped(m_OperatController.getRightBumper(), m_OperatController.getLeftBumper(), m_doubleSolenoid);
+ // m_Collector.dropped(m_OperatController.getRightBumper(), m_OperatController.getLeftBumper(), m_doubleSolenoid);
   
-    
+  m_Climb.runWinch(m_OperatController.getLeftY());
+  m_Climb.activatePiston(m_OperatController.getRawButtonReleased(7), m_climbSolenoid);
 
   m_Compress.run(m_Compy);
 
@@ -180,11 +184,8 @@ SmartDashboard.putString("Solenoid Value", m_doubleSolenoid.get().name());
   @Override
   public void testPeriodic() {
     
-    if(SmartDashboard.getString("AutoName", "") != ""){
-      Auto.recordSequence(SmartDashboard.getString("AutoName", "") + "X", m_DriveController.getLeftY());
-      Auto.recordSequence(SmartDashboard.getString("AutoName", "") + "Y", m_DriveController.getRightX());
-    }
-    
+   
+
   }
 
 }

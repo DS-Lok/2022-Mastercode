@@ -11,6 +11,8 @@ public class Compress {
         SmartDashboard.putNumber("Pressure Switch Value", COMPY.getPressure());
         COMPY.enableAnalog(60,120);
 
+        //COMPY.enableDigital();
+
         //Pnuematics Ports
         //5/4 = climb
         //1/0 = collector

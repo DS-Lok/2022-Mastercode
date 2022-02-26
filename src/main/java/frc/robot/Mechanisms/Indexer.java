@@ -8,11 +8,15 @@ import com.revrobotics.ColorMatch;
 import com.revrobotics.ColorMatchResult;
 import com.revrobotics.ColorSensorV3;
 import edu.wpi.first.wpilibj.I2C;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.Ultrasonic;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
 
 public class Indexer {
+
+    Timer timeout = new Timer();
+    
     Color detectedColor;
     //Color Sensor 
     private I2C.Port i2cPort = I2C.Port.kOnboard;
@@ -69,7 +73,9 @@ return colorString;
 }
 
 
-
+public void setIndex(){
+    IndexStatus = false;
+}
 
 
 //UltraSonic Method 
@@ -80,15 +86,21 @@ SmartDashboard.putNumber("BOTTOM SENSOR", iUltrasonic1.getRangeInches());
 SmartDashboard.putNumber("TOP SENSOR", iUltrasonic2.getRangeInches());
 
 
-//Setting Status after collected 
-if((iUltrasonic1.getRangeInches() < 7 | iUltrasonic1.getRangeInches() > 500) && (iUltrasonic2.getRangeInches() > 7)){
+//Setting Status after collected  | iUltrasonic1.getRangeInches() > 500    | iUltrasonic2.getRangeInches() > 500
+if((iUltrasonic1.getRangeInches() < 7) && (iUltrasonic2.getRangeInches() > 7)){
     SmartDashboard.putBoolean("IndexStatus", IndexStatus);
     IndexStatus = true;
-}else if(iUltrasonic2.getRangeInches() < 7 | iUltrasonic2.getRangeInches() > 500){
+    timeout.start();
+}else if(iUltrasonic2.getRangeInches() < 7 | iUltrasonic2.getRangeInches() > 20 ){
     SmartDashboard.putBoolean("IndexStatus", IndexStatus);
     IndexStatus = false;
 }
-if((iUltrasonic1.getRangeInches() < 7 && iUltrasonic2.getRangeInches() < 7) |(iUltrasonic1.getRangeInches() > 500 && iUltrasonic2.getRangeInches() > 500) ){
+else if(timeout.get() == 5 & (iUltrasonic2.getRangeInches() > 7 | iUltrasonic2.getRangeInches() < 15 ) ){
+    IndexStatus = false;
+    timeout.stop();
+    timeout.reset();
+}
+if((iUltrasonic1.getRangeInches() < 7 && iUltrasonic2.getRangeInches() < 7) |(iUltrasonic1.getRangeInches() > 15 && iUltrasonic2.getRangeInches() > 15) ){
     HARDSTOP = true;
 
 }
