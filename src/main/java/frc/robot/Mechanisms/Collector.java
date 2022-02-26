@@ -18,7 +18,7 @@ import frc.robot.Robot;
 
 public class Collector {
     
-    private  DoubleSolenoid m_LeftPiston;
+    
     
     //private DoubleSolenoid m_RightPiston = new DoubleSolenoid(PneumaticsModuleType.REVPH, 1, 0);
 
@@ -40,7 +40,7 @@ public class Collector {
 
 
 
-        m_LeftPiston = PCM.makeDoubleSolenoid(0, 1);
+        
     
         collectorMotor = new WPI_TalonFX(11);
 
@@ -51,7 +51,7 @@ public class Collector {
     public void dropped(boolean pistonsOut, boolean other) { //true is pistons out, false is not
         
         if (pistonsOut || other) {
-            m_LeftPiston.toggle();
+            
            // m_RightPiston.set(Value.kForward);
 
             //possibly setting kOff will depresurize them and give them compressability?

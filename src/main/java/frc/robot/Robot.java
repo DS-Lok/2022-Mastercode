@@ -5,12 +5,15 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.Compressor;
+import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PneumaticsBase;
 import edu.wpi.first.wpilibj.PneumaticsControlModule;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.Ultrasonic;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Mechanisms.Climb;
@@ -31,6 +34,10 @@ public class Robot extends TimedRobot {
 
   String teamColor;
 
+
+  private final DoubleSolenoid m_doubleSolenoid =
+      new DoubleSolenoid(PneumaticsModuleType.REVPH, 0, 1);
+
    PneumaticsControlModule PCM = new PneumaticsControlModule(14);
 
   public Drivetrain m_Drive = new Drivetrain();
@@ -39,6 +46,7 @@ public class Robot extends TimedRobot {
   public Compress m_Compress = new Compress();
   public Shooter m_Shooter = new Shooter();
   
+  Ultrasonic test;
 
   Compressor m_Compy;
 
@@ -56,6 +64,8 @@ public class Robot extends TimedRobot {
 
   @Override
   public void robotInit() {
+
+    test = new Ultrasonic(5, 4);
     m_chooser.setDefaultOption("Default Auto", kDefaultAuto);
     m_chooser.addOption("My Auto", kCustomAuto);
     SmartDashboard.putData("Auto choices", m_chooser);
@@ -65,7 +75,8 @@ public class Robot extends TimedRobot {
 
     m_DriveController = new XboxController(0);
     m_OperatController = new XboxController(1);
-    PCM = new PneumaticsControlModule(14);
+    
+    
     
     m_Compy = new Compressor(14, PneumaticsModuleType.REVPH);  
     //Climb.initClimb(false);
@@ -126,6 +137,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopPeriodic() {
+    SmartDashboard.putNumber("test", test.getRangeInches());
 
   //Driver
   m_Drive.drive(m_DriveController.getLeftY(), m_DriveController.getRightX());
@@ -143,12 +155,16 @@ public class Robot extends TimedRobot {
   m_Indexer.COLLECT(m_OperatController.getRightBumper(), m_OperatController.getLeftBumper());
   BALLCOLOR = m_Indexer.ColorSensor();
 
-  //m_Collector.COLLECT(m_OperatController.getLeftBumper(), m_OperatController.getRightBumper());
-  //m_Collector.dropped(m_OperatController.getRightBumper(), m_OperatController.getLeftBumper());
-  
-  //m_Compress.run(m_Compy);
+  m_Collector.COLLECT(m_OperatController.getLeftBumper(), m_OperatController.getRightBumper());
+  //m_Collector.dropped();
+  if(m_OperatController.getRightBumper() | m_OperatController.getLeftBumper()){
+    m_doubleSolenoid.set(Value.kForward);
+  }else{
+    m_doubleSolenoid.set(Value.kReverse);
+  }
+  m_Compress.run(m_Compy);
 
-
+SmartDashboard.putString("Solenoid Value", m_doubleSolenoid.get().name());
   }
 
  

@@ -25,18 +25,18 @@ public class Indexer {
     //UltraSonics 
     private Ultrasonic iUltrasonic1 = new Ultrasonic(1, 0);
     private Ultrasonic iUltrasonic2 = new Ultrasonic(3, 2);
-    boolean IndexStatus = false;
+    
     //Motor
     WPI_TalonSRX indexerWheel; 
 
     boolean HARDSTOP;
-
+    boolean IndexStatus;
 
 
 //Indexer Object 
 public Indexer(){
     indexerWheel = new WPI_TalonSRX(13);
-
+    IndexStatus = false;
 }
 
 
@@ -81,7 +81,7 @@ SmartDashboard.putNumber("TOP SENSOR", iUltrasonic2.getRangeInches());
 
 
 //Setting Status after collected 
-if((iUltrasonic1.getRangeInches() < 7 | iUltrasonic1.getRangeInches() > 500) && !(iUltrasonic2.getRangeInches() < 7)){
+if((iUltrasonic1.getRangeInches() < 7 | iUltrasonic1.getRangeInches() > 500) && (iUltrasonic2.getRangeInches() > 7)){
     SmartDashboard.putBoolean("IndexStatus", IndexStatus);
     IndexStatus = true;
 }else if(iUltrasonic2.getRangeInches() < 7 | iUltrasonic2.getRangeInches() > 500){
