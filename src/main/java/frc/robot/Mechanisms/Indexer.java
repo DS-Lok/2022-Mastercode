@@ -13,16 +13,17 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
 
 public class Indexer {
+    Color detectedColor;
     //Color Sensor 
     private I2C.Port i2cPort = I2C.Port.kOnboard;
     private ColorSensorV3 m_colorS = new ColorSensorV3(i2cPort);
     private ColorMatch m_colorMatch = new ColorMatch();
     //Color targeting
-    private Color kBluetarget = new Color(0, 0, 0.5);
-    private Color kRedtarget = new Color(0.5, 0, 0);
+    private Color BLUE = new Color(0, 0, 0.5);
+    private Color RED = new Color(0.4, 0, 0);
 
     //UltraSonics 
-    private Ultrasonic iUltrasonic1 = new Ultrasonic(5, 4);
+    private Ultrasonic iUltrasonic1 = new Ultrasonic(1, 0);
     private Ultrasonic iUltrasonic2 = new Ultrasonic(3, 2);
     boolean IndexStatus = false;
     //Motor
@@ -43,16 +44,18 @@ public Indexer(){
 
 
 //Color Sensor Method 
-public void  ColorSensor(){
+public String  ColorSensor(){
+    m_colorMatch.addColorMatch(RED);
+    m_colorMatch.addColorMatch(BLUE);
 //Detecting and result 
-Color detectedColor = m_colorS.getColor();
+detectedColor = m_colorS.getColor();
 String colorString;
 ColorMatchResult match = m_colorMatch.matchClosestColor(detectedColor);
 
 //Matching Colors 
-if(match.color == kBluetarget){
+if(match.color.equals(BLUE)){
     colorString = "Blue";
-}else if(match.color == kRedtarget){
+}else if(match.color.equals(RED)){
     colorString = "Red";
 }else{
     colorString = "Unimportant";
@@ -62,6 +65,7 @@ if(match.color == kBluetarget){
 SmartDashboard.putNumber("Red",detectedColor.red);
 SmartDashboard.putNumber("Blue", detectedColor.blue);
 SmartDashboard.putString("Color", colorString);
+return colorString;
 }
 
 
@@ -77,12 +81,14 @@ SmartDashboard.putNumber("TOP SENSOR", iUltrasonic2.getRangeInches());
 
 
 //Setting Status after collected 
-if(iUltrasonic1.getRangeInches() < 7 && !(iUltrasonic2.getRangeInches() > 7)){
+if((iUltrasonic1.getRangeInches() < 7 | iUltrasonic1.getRangeInches() > 500) && !(iUltrasonic2.getRangeInches() < 7)){
+    SmartDashboard.putBoolean("IndexStatus", IndexStatus);
     IndexStatus = true;
-}else if(iUltrasonic2.getRangeInches() < 7){
+}else if(iUltrasonic2.getRangeInches() < 7 | iUltrasonic2.getRangeInches() > 500){
+    SmartDashboard.putBoolean("IndexStatus", IndexStatus);
     IndexStatus = false;
 }
-if(iUltrasonic1.getRangeInches() < 7 && iUltrasonic2.getRangeInches() < 7){
+if((iUltrasonic1.getRangeInches() < 7 && iUltrasonic2.getRangeInches() < 7) |(iUltrasonic1.getRangeInches() > 500 && iUltrasonic2.getRangeInches() > 500) ){
     HARDSTOP = true;
 
 }
@@ -97,10 +103,10 @@ SmartDashboard.putBoolean("HARDSTOP", HARDSTOP);
 
 public void COLLECT(Boolean RUN, Boolean OTHER){
     if((RUN | IndexStatus)  && !HARDSTOP){
-        indexerWheel.set(-0.4);
+        indexerWheel.set(-0.6);
     }
     else if(OTHER){
-        indexerWheel.set(0.4);
+        indexerWheel.set(0.6);
     }
     else{
         indexerWheel.set(0);
@@ -121,7 +127,7 @@ public void COLLECT(Boolean RUN, Boolean OTHER){
 public void index(){
 
         i_UltraSonic();
-        ColorSensor();
+        
 }
 
 }

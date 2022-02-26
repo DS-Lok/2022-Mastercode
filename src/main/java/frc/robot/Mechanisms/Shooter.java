@@ -7,10 +7,14 @@ import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.Robot;
 import frc.robot.Systems.Vision;
 
 public class Shooter {
+    
+    Boolean AUTODUMPING = true;
     WPI_TalonFX m_leftMotor;
     WPI_TalonFX m_rightMotor;
     TalonFXConfiguration configs;
@@ -29,7 +33,7 @@ public class Shooter {
         m_rightMotor.configFactoryDefault();
         m_leftMotor.configFactoryDefault();
 
-
+        
         
 
         configs = new TalonFXConfiguration();
@@ -67,22 +71,42 @@ public class Shooter {
     }
 
 
-    public void feed(Boolean On) {
+
+
+
+
+
+    public void feed(Boolean On, Boolean TAKE) {
         if (On == true) {
             m_feeder.set(ControlMode.PercentOutput, .7); //placeholder speed, maybe make staight 1 if I can it
-        } else {m_feeder.set(ControlMode.PercentOutput, 0);}
+        } 
+        else if(TAKE) m_feeder.set(ControlMode.PercentOutput, -.6);
+        else {m_feeder.set(ControlMode.PercentOutput, 0);}
     }
 
-    public void flywheelRev(int mode) { // Modes: 0 = straight against hub, 1 = pin shot, 2 = limelight assisted
+
+
+
+
+    public void flywheelRev(int mode, String BALLCOLOR, String ALLIANCE, Boolean DISABLECOMMAND) { // Modes: 0 = straight against hub, 1 = pin shot, 2 = limelight assisted
         SmartDashboard.putNumber("RightShooter", m_rightMotor.getSelectedSensorVelocity());
         SmartDashboard.putNumber("LeftShooter", m_leftMotor.getSelectedSensorVelocity());
+        SmartDashboard.putBoolean("AUTODUMP", AUTODUMPING);
 
 
+        if(DISABLECOMMAND){
+            AUTODUMPING = !AUTODUMPING;
+        }
+
+        if(mode >=0 & BALLCOLOR != ALLIANCE & AUTODUMPING){
+            mode = 600;
+            
+        }
 
         switch (mode) {
             case 0:
-                m_rightMotor.set(TalonFXControlMode.PercentOutput, .5); //all values here are placeholders. Test to find actual velocities
-                m_leftMotor.set(TalonFXControlMode.PercentOutput, .5);
+                m_rightMotor.set(TalonFXControlMode.PercentOutput, .35); //all values here are placeholders. Test to find actual velocities
+                m_leftMotor.set(TalonFXControlMode.PercentOutput, .35);
                 break;
 
             case 90:
@@ -91,8 +115,11 @@ public class Shooter {
                 break;
             
             case 180:
-                m_leftMotor.set(TalonFXControlMode.Velocity, speedForDistance());
-                m_rightMotor.set(TalonFXControlMode.Velocity, speedForDistance());
+                //m_leftMotor.set(TalonFXControlMode.Velocity, speedForDistance());
+                //m_rightMotor.set(TalonFXControlMode.Velocity, speedForDistance());
+
+                m_rightMotor.set(TalonFXControlMode.PercentOutput, .64); //all values here are placeholders. Test to find actual velocities
+                m_leftMotor.set(TalonFXControlMode.PercentOutput, .64);
                 break;
             case 270:
                 m_leftMotor.set(TalonFXControlMode.Velocity,500);
@@ -104,6 +131,10 @@ public class Shooter {
                 m_leftMotor.set(ControlMode.PercentOutput, 0);
                 break;
 
+            case 600:
+            m_rightMotor.set(ControlMode.PercentOutput, .15);
+            m_leftMotor.set(ControlMode.PercentOutput, .15);
+
             default:
                 m_rightMotor.set(ControlMode.PercentOutput, 0);
                 m_leftMotor.set(ControlMode.PercentOutput, 0);
@@ -111,6 +142,10 @@ public class Shooter {
         }
 
     }
+
+
+
+
 
     public double speedForDistance() {
         //create some sort of table of Distance VS Speed

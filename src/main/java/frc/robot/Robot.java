@@ -38,6 +38,7 @@ public class Robot extends TimedRobot {
   public Indexer m_Indexer = new Indexer();
   public Compress m_Compress = new Compress();
   public Shooter m_Shooter = new Shooter();
+  
 
   Compressor m_Compy;
 
@@ -46,8 +47,11 @@ public class Robot extends TimedRobot {
 
   int ShootMode;
   Boolean Shoot;
+  Boolean TAKE;
   static int autoSection;
+  String BALLCOLOR;
 
+  String ALLIANCE;
 
 
   @Override
@@ -116,6 +120,8 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopInit() {
     m_Collector.dropped(false, false);
+    ALLIANCE = DriverStation.getAlliance().name();
+    SmartDashboard.putString("Alliance", ALLIANCE);
   }
 
   @Override
@@ -126,24 +132,21 @@ public class Robot extends TimedRobot {
   m_Drive.brake(m_DriveController.getAButton());
 
   //Operator
-  if (m_OperatController.getBButton()) ShootMode = 0;
-  else if (m_OperatController.getXButton()) ShootMode = 1;
-  else if (m_OperatController.getYButton()) ShootMode = 2;
-  else if (m_OperatController.getAButton()) ShootMode = 3;
-  else ShootMode = 4;
-  m_Shooter.flywheelRev(ShootMode);
+  m_Shooter.flywheelRev(m_OperatController.getPOV(), BALLCOLOR, ALLIANCE, m_OperatController.getAButtonReleased());
   if (m_OperatController.getRightTriggerAxis() >= .5)Shoot = true;
   else Shoot = false;
-  m_Shooter.feed(Shoot);
+  if (m_OperatController.getLeftTriggerAxis() >= .5)TAKE = true;
+  else TAKE = false;
+  m_Shooter.feed(Shoot, TAKE);
 
   m_Indexer.index();
   m_Indexer.COLLECT(m_OperatController.getRightBumper(), m_OperatController.getLeftBumper());
-  
+  BALLCOLOR = m_Indexer.ColorSensor();
 
-  m_Collector.COLLECT(m_OperatController.getLeftBumper(), m_OperatController.getRightBumper());
-  m_Collector.dropped(m_OperatController.getRightBumper(), m_OperatController.getLeftBumper());
+  //m_Collector.COLLECT(m_OperatController.getLeftBumper(), m_OperatController.getRightBumper());
+  //m_Collector.dropped(m_OperatController.getRightBumper(), m_OperatController.getLeftBumper());
   
-  m_Compress.run(m_Compy);
+  //m_Compress.run(m_Compy);
 
 
   }
@@ -170,4 +173,5 @@ public class Robot extends TimedRobot {
     }
     
   }
+
 }

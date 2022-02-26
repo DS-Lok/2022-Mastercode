@@ -36,13 +36,13 @@ public class Drivetrain {
       m_RightMotorSix = new WPI_TalonFX(6);
 
 
-      m_leftMotorOne.setNeutralMode(NeutralMode.Coast);
-      m_leftMotorTwo.setNeutralMode(NeutralMode.Coast);
-      m_leftMotorThree.setNeutralMode(NeutralMode.Coast);
+      m_leftMotorOne.setNeutralMode(NeutralMode.Brake);
+      m_leftMotorTwo.setNeutralMode(NeutralMode.Brake);
+      m_leftMotorThree.setNeutralMode(NeutralMode.Brake);
       
-      m_RightMotorFour.setNeutralMode(NeutralMode.Coast);
-      m_RightMotorFive.setNeutralMode(NeutralMode.Coast);
-      m_RightMotorSix.setNeutralMode(NeutralMode.Coast);
+      m_RightMotorFour.setNeutralMode(NeutralMode.Brake);
+      m_RightMotorFive.setNeutralMode(NeutralMode.Brake);
+      m_RightMotorSix.setNeutralMode(NeutralMode.Brake);
 
 
       right = new MotorControllerGroup(m_RightMotorFour, m_RightMotorFive, m_RightMotorSix);
@@ -67,22 +67,24 @@ public class Drivetrain {
 
     public void brake(Boolean braking){
       if(braking){
-        m_leftMotorOne.setNeutralMode(NeutralMode.Brake);
+        m_leftMotorOne.setNeutralMode(NeutralMode.Coast);
+        m_leftMotorTwo.setNeutralMode(NeutralMode.Coast);
+        m_leftMotorThree.setNeutralMode(NeutralMode.Coast);
+        
+        m_RightMotorFour.setNeutralMode(NeutralMode.Coast);
+        m_RightMotorFive.setNeutralMode(NeutralMode.Coast);
+        m_RightMotorSix.setNeutralMode(NeutralMode.Coast);
+  
+      }
+      else{
+
+      m_leftMotorOne.setNeutralMode(NeutralMode.Brake);
       m_leftMotorTwo.setNeutralMode(NeutralMode.Brake);
       m_leftMotorThree.setNeutralMode(NeutralMode.Brake);
       
       m_RightMotorFour.setNeutralMode(NeutralMode.Brake);
       m_RightMotorFive.setNeutralMode(NeutralMode.Brake);
       m_RightMotorSix.setNeutralMode(NeutralMode.Brake);
-      }
-      else{
-        m_leftMotorOne.setNeutralMode(NeutralMode.Coast);
-      m_leftMotorTwo.setNeutralMode(NeutralMode.Coast);
-      m_leftMotorThree.setNeutralMode(NeutralMode.Coast);
-      
-      m_RightMotorFour.setNeutralMode(NeutralMode.Coast);
-      m_RightMotorFive.setNeutralMode(NeutralMode.Coast);
-      m_RightMotorSix.setNeutralMode(NeutralMode.Coast);
       }
     }
 
