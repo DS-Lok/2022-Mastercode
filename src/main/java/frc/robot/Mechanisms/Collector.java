@@ -48,17 +48,20 @@ public class Collector {
 
     }
 
-    public void dropped(boolean pistonsOut, boolean other) { //true is pistons out, false is not
+    public void dropped(boolean pistonsOut, boolean other, DoubleSolenoid m_doubleSolenoid) { //true is pistons out, false is not
         
         if (pistonsOut || other) {
             
-           // m_RightPiston.set(Value.kForward);
+            m_doubleSolenoid.set(Value.kForward);
+  
+            
 
             //possibly setting kOff will depresurize them and give them compressability?
 
         } else if (!pistonsOut || other) {
          // m_LeftPiston.set(Value.kReverse);
             //m_RightPiston.set(Value.kReverse);
+            m_doubleSolenoid.set(Value.kReverse);
         }
     } 
 
@@ -72,6 +75,7 @@ public class Collector {
             collectorMotor.set(ControlMode.PercentOutput,-.3);
         }
         else{
+            SmartDashboard.putBoolean("Collecting", Collect);
             collectorMotor.set(ControlMode.PercentOutput, 0);
         }
     }

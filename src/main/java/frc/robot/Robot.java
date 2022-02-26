@@ -35,8 +35,7 @@ public class Robot extends TimedRobot {
   String teamColor;
 
 
-  private final DoubleSolenoid m_doubleSolenoid =
-      new DoubleSolenoid(PneumaticsModuleType.REVPH, 0, 1);
+  private final DoubleSolenoid m_doubleSolenoid = new DoubleSolenoid(14, PneumaticsModuleType.REVPH, 0, 1);
 
    PneumaticsControlModule PCM = new PneumaticsControlModule(14);
 
@@ -130,7 +129,7 @@ public class Robot extends TimedRobot {
   
   @Override
   public void teleopInit() {
-    m_Collector.dropped(false, false);
+    m_Collector.dropped(false, false, m_doubleSolenoid);
     ALLIANCE = DriverStation.getAlliance().name();
     SmartDashboard.putString("Alliance", ALLIANCE);
   }
@@ -156,12 +155,10 @@ public class Robot extends TimedRobot {
   BALLCOLOR = m_Indexer.ColorSensor();
 
   m_Collector.COLLECT(m_OperatController.getLeftBumper(), m_OperatController.getRightBumper());
-  //m_Collector.dropped();
-  if(m_OperatController.getRightBumper() | m_OperatController.getLeftBumper()){
-    m_doubleSolenoid.set(Value.kForward);
-  }else{
-    m_doubleSolenoid.set(Value.kReverse);
-  }
+  m_Collector.dropped(m_OperatController.getRightBumper(), m_OperatController.getLeftBumper(), m_doubleSolenoid);
+  
+    
+
   m_Compress.run(m_Compy);
 
 SmartDashboard.putString("Solenoid Value", m_doubleSolenoid.get().name());
