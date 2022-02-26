@@ -10,6 +10,7 @@ import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.PneumaticsControlModule;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -35,9 +36,11 @@ public class Collector {
 
 
 
-    public Collector() {
+    public Collector(PneumaticsControlModule PCM) {
 
-        m_LeftPiston = new DoubleSolenoid(PneumaticsModuleType.REVPH, 0, 1);
+
+
+        m_LeftPiston = PCM.makeDoubleSolenoid(0, 1);
     
         collectorMotor = new WPI_TalonFX(11);
 

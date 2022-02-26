@@ -6,6 +6,8 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.PneumaticsBase;
+import edu.wpi.first.wpilibj.PneumaticsControlModule;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
@@ -29,12 +31,14 @@ public class Robot extends TimedRobot {
 
   String teamColor;
 
+   PneumaticsControlModule PCM = new PneumaticsControlModule(14);
+
   public Drivetrain m_Drive = new Drivetrain();
-  public Collector m_Collector = new Collector();
+  public Collector m_Collector = new Collector(PCM);
   public Indexer m_Indexer = new Indexer();
   public Compress m_Compress = new Compress();
   public Shooter m_Shooter = new Shooter();
-  
+
   Compressor m_Compy;
 
   private XboxController m_DriveController;
@@ -43,6 +47,7 @@ public class Robot extends TimedRobot {
   int ShootMode;
   Boolean Shoot;
   static int autoSection;
+
 
 
   @Override
@@ -56,7 +61,8 @@ public class Robot extends TimedRobot {
 
     m_DriveController = new XboxController(0);
     m_OperatController = new XboxController(1);
-  
+    PCM = new PneumaticsControlModule(14);
+    
     m_Compy = new Compressor(14, PneumaticsModuleType.REVPH);  
     //Climb.initClimb(false);
   }
