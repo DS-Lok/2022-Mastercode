@@ -5,6 +5,7 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
+import frc.robot.Systems.Vision;
 
 public class Drivetrain {
     
@@ -21,12 +22,18 @@ public class Drivetrain {
 
     private final DifferentialDrive drive;
     
+    public static double steering;
+    public static boolean manualSteering;
 
 
-    
+    double limeSteerCoefficient = .1;
+    double piSteerCoefficient = .1;
 
     
     public Drivetrain() {
+
+
+
       m_leftMotorOne = new WPI_TalonFX(1);
       m_leftMotorTwo = new WPI_TalonFX(2);
       m_leftMotorThree = new WPI_TalonFX(3);
@@ -52,7 +59,8 @@ public class Drivetrain {
 
       drive = new DifferentialDrive(right, left);
 
-
+      
+      //manualSteering = true;
      
 
 
@@ -61,7 +69,10 @@ public class Drivetrain {
     @SuppressWarnings("ParameterName")
     public void drive(double speed, double rotation) {
 
-      drive.arcadeDrive(speed, rotation*.65);
+
+      if (manualSteering) steering = rotation * 0.65;
+      
+      drive.arcadeDrive(speed, steering);
 
     }
 
@@ -89,21 +100,19 @@ public class Drivetrain {
     }
 
 
-    public void target(double angle, int side) { //0 for front of robot (limelight), 1 for back of robot (ball targeting)
-
-      switch (side) {
-        case 0:
-          
-          break;
-      
-        case 1:
-
-          break;
+    public void targetLime(boolean On, double Target) {
+      manualSteering = !On;
+      if (On) {
+        steering = Vision.AngleFromTarget() * limeSteerCoefficient;
       }
-
-
     }
 
+    public void TargetPi(boolean On) {
+      manualSteering = !On;
+      if (On) {
+        steering = Vision.AngleFromBall() * piSteerCoefficient;
+      }
+    }
 
     public double Speed() {
 
