@@ -98,7 +98,8 @@ public class Shooter {
             AUTODUMPING = !AUTODUMPING;
         }
 
-        if(mode >=0 & BALLCOLOR != ALLIANCE & AUTODUMPING){
+        if((BALLCOLOR != ALLIANCE && BALLCOLOR != "Unimportant") && AUTODUMPING){
+            feed(true, false);
             mode = 600;
             
         }
@@ -132,8 +133,8 @@ public class Shooter {
                 break;
 
             case 600:
-            m_rightMotor.set(ControlMode.PercentOutput, .15);
-            m_leftMotor.set(ControlMode.PercentOutput, .15);
+            m_rightMotor.set(ControlMode.PercentOutput, .18);
+            m_leftMotor.set(ControlMode.PercentOutput, .18);
 
             default:
                 m_rightMotor.set(ControlMode.PercentOutput, 0);

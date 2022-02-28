@@ -24,7 +24,8 @@ public class Indexer {
     private ColorMatch m_colorMatch = new ColorMatch();
     //Color targeting
     private Color BLUE = new Color(0, 0, 0.5);
-    private Color RED = new Color(0.4, 0, 0);
+    private Color RED = new Color(0.6, 0, 0);
+    private Color NONE = new Color (0,0,0);
 
     //UltraSonics 
     private Ultrasonic iUltrasonic1 = new Ultrasonic(1, 0);
@@ -34,13 +35,16 @@ public class Indexer {
     WPI_TalonSRX indexerWheel; 
 
     boolean HARDSTOP;
-    boolean IndexStatus;
+    boolean IndexStatus = false;
+
+    boolean TOPDETECTED;
+    boolean BOTDETECTED;
 
 
 //Indexer Object 
 public Indexer(){
     indexerWheel = new WPI_TalonSRX(13);
-    IndexStatus = false;
+    
 }
 
 
@@ -51,6 +55,7 @@ public Indexer(){
 public String  ColorSensor(){
     m_colorMatch.addColorMatch(RED);
     m_colorMatch.addColorMatch(BLUE);
+    m_colorMatch.addColorMatch(NONE);
 //Detecting and result 
 detectedColor = m_colorS.getColor();
 String colorString;
@@ -83,30 +88,31 @@ public void i_UltraSonic(){
 iUltrasonic1.setAutomaticMode(true);
 iUltrasonic2.setAutomaticMode(true);
 SmartDashboard.putNumber("BOTTOM SENSOR", iUltrasonic1.getRangeInches());
+SmartDashboard.putBoolean("BOTTOM SENSOR DETECTING", BOTDETECTED);
 SmartDashboard.putNumber("TOP SENSOR", iUltrasonic2.getRangeInches());
+SmartDashboard.putBoolean("TOP SENSOR DETECTING", TOPDETECTED);
+SmartDashboard.putBoolean("IndexStatus", IndexStatus);
 
+//Ultrasonic States accounting for errors in the ultrasonic itself
+if(iUltrasonic2.getRangeInches() < 7 || iUltrasonic2.getRangeInches() > 20) TOPDETECTED = true;
+else TOPDETECTED = false;
 
-//Setting Status after collected  | iUltrasonic1.getRangeInches() > 500    | iUltrasonic2.getRangeInches() > 500
-if((iUltrasonic1.getRangeInches() < 7) && (iUltrasonic2.getRangeInches() > 7)){
-    SmartDashboard.putBoolean("IndexStatus", IndexStatus);
+if(iUltrasonic1.getRangeInches() < 7 || iUltrasonic1.getRangeInches() > 20) BOTDETECTED = true;
+else BOTDETECTED = false;
+
+//If ball is detected in bottom but not top, cycle bottom ball to top 
+if(BOTDETECTED && !TOPDETECTED){
     IndexStatus = true;
-    timeout.start();
-}else if(iUltrasonic2.getRangeInches() < 7 | iUltrasonic2.getRangeInches() > 20 ){
-    SmartDashboard.putBoolean("IndexStatus", IndexStatus);
+}    
+//When ball reaches top, cut indexer
+else if(TOPDETECTED){
     IndexStatus = false;
 }
-else if(timeout.get() == 5 & (iUltrasonic2.getRangeInches() > 7 | iUltrasonic2.getRangeInches() < 15 ) ){
-    IndexStatus = false;
-    timeout.stop();
-    timeout.reset();
-}
-if((iUltrasonic1.getRangeInches() < 7 && iUltrasonic2.getRangeInches() < 7) |(iUltrasonic1.getRangeInches() > 15 && iUltrasonic2.getRangeInches() > 15) ){
-    HARDSTOP = true;
 
-}
-else{
-    HARDSTOP = false;
-}
+//If a ball detected in both spots, cut the indexer
+if(BOTDETECTED && TOPDETECTED) HARDSTOP = true;
+else HARDSTOP = false;
+
 SmartDashboard.putBoolean("HARDSTOP", HARDSTOP);
 }
 
@@ -114,8 +120,8 @@ SmartDashboard.putBoolean("HARDSTOP", HARDSTOP);
 
 
 public void COLLECT(Boolean RUN, Boolean OTHER){
-    if((RUN | IndexStatus)  && !HARDSTOP){
-        indexerWheel.set(-0.6);
+    if((RUN || IndexStatus)  && !HARDSTOP){
+        indexerWheel.set(-0.2);
     }
     else if(OTHER){
         indexerWheel.set(0.6);

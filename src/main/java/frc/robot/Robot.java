@@ -78,7 +78,7 @@ public class Robot extends TimedRobot {
     
     
     m_climbSolenoid.set(Value.kReverse);
-    m_doubleSolenoid.set(Value.kForward);
+    m_doubleSolenoid.set(Value.kReverse);
     m_Compy = new Compressor(14, PneumaticsModuleType.REVPH);  
     //Climb.initClimb(false);
   }
@@ -163,7 +163,7 @@ public class Robot extends TimedRobot {
   m_Climb.runWinch(m_OperatController.getLeftY());
   m_Climb.activatePiston(m_OperatController.getRawButtonReleased(7), m_climbSolenoid);
 
-  m_Compress.run(m_Compy);
+  //m_Compress.run(m_Compy);
 
 SmartDashboard.putString("Solenoid Value", m_doubleSolenoid.get().name());
   }

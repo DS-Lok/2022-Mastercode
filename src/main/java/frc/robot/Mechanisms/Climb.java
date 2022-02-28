@@ -36,12 +36,6 @@ public class Climb {
     }
 
     public void runWinch(Double joyOut){
-       /* 
-        if(FORWARDS)winch1.set(ControlMode.PercentOutput, .2);
-        else if (BACKWARDS) winch1.set(ControlMode.PercentOutput, -.2);
-        else winch1.set(ControlMode.PercentOutput, 0);
-        */
-
         winch1.set(ControlMode.PercentOutput, joyOut *.3);
     }
     public void activatePiston(Boolean TOGGLE, DoubleSolenoid SOLENOID){
