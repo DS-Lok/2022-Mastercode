@@ -69,7 +69,7 @@ public class Collector {
     public void COLLECT(Boolean Dump, Boolean Collect) {
         if (Collect) {
             SmartDashboard.putBoolean("Collecting", Collect);
-            collectorMotor.set(.3);
+            collectorMotor.set(.4);
         } else if (Dump) {
             
             collectorMotor.set(ControlMode.PercentOutput,-.3);

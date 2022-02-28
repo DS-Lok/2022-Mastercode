@@ -78,7 +78,7 @@ public class Robot extends TimedRobot {
     
     
     m_climbSolenoid.set(Value.kReverse);
-    m_doubleSolenoid.set(Value.kReverse);
+    //m_doubleSolenoid.set(Value.kReverse);
     m_Compy = new Compressor(14, PneumaticsModuleType.REVPH);  
     //Climb.initClimb(false);
   }
@@ -145,8 +145,12 @@ public class Robot extends TimedRobot {
   m_Drive.drive(m_DriveController.getLeftY(), m_DriveController.getRightX());
   m_Drive.brake(m_DriveController.getAButton());
   m_Drive.targetLime(m_DriveController.getLeftTriggerAxis() > .5);
+
+
+
+
   //Operator
-  m_Shooter.flywheelRev(m_OperatController.getPOV(), BALLCOLOR, ALLIANCE, m_OperatController.getAButtonReleased());
+  m_Shooter.flywheelRev(m_OperatController.getPOV(), BALLCOLOR, ALLIANCE, m_OperatController.getXButtonReleased(), m_OperatController);
   if (m_OperatController.getRightTriggerAxis() >= .5)Shoot = true;
   else Shoot = false;
   if (m_OperatController.getLeftTriggerAxis() >= .5)TAKE = true;
@@ -154,16 +158,16 @@ public class Robot extends TimedRobot {
   m_Shooter.feed(Shoot, TAKE);
 
  m_Indexer.index();
- m_Indexer.COLLECT(m_OperatController.getRightBumper() || Shoot, m_OperatController.getLeftBumper());
+ m_Indexer.COLLECT(m_OperatController.getBButton() || Shoot, m_OperatController.getAButton());
  BALLCOLOR = m_Indexer.ColorSensor();
 
-  m_Collector.COLLECT(m_OperatController.getLeftBumper(), m_OperatController.getRightBumper());
- // m_Collector.dropped(m_OperatController.getRightBumper(), m_OperatController.getLeftBumper(), m_doubleSolenoid);
+  m_Collector.COLLECT(m_OperatController.getAButton(), m_OperatController.getBButton());
+  //m_Collector.dropped(m_OperatController.getBButton(), m_OperatController.getAButton(), m_doubleSolenoid);
   
   m_Climb.runWinch(m_OperatController.getLeftY());
   m_Climb.activatePiston(m_OperatController.getRawButtonReleased(7), m_climbSolenoid);
 
-  //m_Compress.run(m_Compy);
+  m_Compress.run(m_Compy);
 
 SmartDashboard.putString("Solenoid Value", m_doubleSolenoid.get().name());
   }

@@ -8,6 +8,8 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Robot;
 import frc.robot.Systems.Vision;
@@ -16,10 +18,10 @@ public class Shooter {
     
     Boolean AUTODUMPING = true;
     WPI_TalonFX m_MasterMotor;
-    WPI_TalonFX m_SlaveMotor;
+    WPI_TalonFX m_FollowerMotor;
     WPI_TalonSRX m_feeder;
 
-    double kP = 0.1;
+    double kP = 0.15;
     double kI = 0.001;
     double kD = 5;
     double kF = .025;
@@ -27,10 +29,10 @@ public class Shooter {
 
     public Shooter() {
         m_MasterMotor = new WPI_TalonFX(7);
-        m_SlaveMotor = new WPI_TalonFX(8);
+        m_FollowerMotor = new WPI_TalonFX(8);
 
         m_MasterMotor.configFactoryDefault();
-        m_SlaveMotor.configFactoryDefault();
+        m_FollowerMotor.configFactoryDefault();
         
 
         
@@ -45,8 +47,8 @@ public class Shooter {
 
 
 
-        m_SlaveMotor.follow(m_MasterMotor);
-        m_SlaveMotor.setInverted(true);
+        m_FollowerMotor.follow(m_MasterMotor);
+        m_FollowerMotor.setInverted(true);
 
      
 
@@ -73,8 +75,8 @@ public class Shooter {
 
 
 
-    public void flywheelRev(int mode, String BALLCOLOR, String ALLIANCE, Boolean DISABLECOMMAND) { // Modes: 0 = straight against hub, 1 = pin shot, 2 = limelight assisted
-        SmartDashboard.putNumber("RightShooter", m_SlaveMotor.getSelectedSensorVelocity());
+    public void flywheelRev(int mode, String BALLCOLOR, String ALLIANCE, Boolean DISABLECOMMAND, XboxController Rumble) { // Modes: 0 = straight against hub, 1 = pin shot, 2 = limelight assisted
+        SmartDashboard.putNumber("RightShooter", m_FollowerMotor.getSelectedSensorVelocity());
         SmartDashboard.putNumber("LeftShooter", m_MasterMotor.getSelectedSensorVelocity());
         SmartDashboard.putBoolean("AUTODUMP", AUTODUMPING);
 
@@ -90,16 +92,30 @@ public class Shooter {
 
         switch (mode) {
             case 0:
-                m_MasterMotor.set(TalonFXControlMode.PercentOutput, .35);
+                m_MasterMotor.set(TalonFXControlMode.Velocity, 5550);
+
+                if (5500 < m_MasterMotor.getSelectedSensorVelocity() && m_MasterMotor.getSelectedSensorVelocity() < 5600) {
+                    Rumble.setRumble(RumbleType.kLeftRumble, 0.5);
+                } else {Rumble.setRumble(RumbleType.kLeftRumble, 0);
+                }
+
                 break;
 
             case 90:
-                m_MasterMotor.set(TalonFXControlMode.Velocity, 1807);
+                m_MasterMotor.set(TalonFXControlMode.Velocity, 5750);
+                if (5700 < m_MasterMotor.getSelectedSensorVelocity() && m_MasterMotor.getSelectedSensorVelocity() < 5800) {
+                    Rumble.setRumble(RumbleType.kLeftRumble, 0.5);
+                } else {Rumble.setRumble(RumbleType.kLeftRumble, 0);
+                }
                 break;
             
             case 180:
-                m_MasterMotor.set(TalonFXControlMode.PercentOutput, .64);
-                break;
+                m_MasterMotor.set(TalonFXControlMode.Velocity, 7500);
+                if (7450 < m_MasterMotor.getSelectedSensorVelocity() && m_MasterMotor.getSelectedSensorVelocity() < 7550) {
+                    Rumble.setRumble(RumbleType.kLeftRumble, 0.5);
+                } else {Rumble.setRumble(RumbleType.kLeftRumble, 0);
+                }
+            break;
             case 270:
                 m_MasterMotor.set(ControlMode.PercentOutput, 0.15);
                 break;

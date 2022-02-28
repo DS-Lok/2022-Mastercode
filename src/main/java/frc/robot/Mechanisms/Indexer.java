@@ -78,9 +78,14 @@ return colorString;
 }
 
 
+
+
+
 public void setIndex(){
     IndexStatus = false;
 }
+
+
 
 
 
@@ -103,11 +108,6 @@ public void COLLECT(Boolean RUN, Boolean OTHER){
 
 
     
-
-
-
-
-
 public void index(){
     iUltrasonic1.setAutomaticMode(true);
     iUltrasonic2.setAutomaticMode(true);
