@@ -100,7 +100,7 @@ public class Drivetrain {
     }
 
 
-    public void targetLime(boolean On, double Target) {
+    public void targetLime(boolean On) {
       manualSteering = !On;
       if (On) {
         steering = Vision.AngleFromTarget() * limeSteerCoefficient;

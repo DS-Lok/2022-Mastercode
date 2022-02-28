@@ -144,7 +144,7 @@ public class Robot extends TimedRobot {
   //Driver
   m_Drive.drive(m_DriveController.getLeftY(), m_DriveController.getRightX());
   m_Drive.brake(m_DriveController.getAButton());
-
+  m_Drive.targetLime(m_DriveController.getLeftTriggerAxis() > .5);
   //Operator
   m_Shooter.flywheelRev(m_OperatController.getPOV(), BALLCOLOR, ALLIANCE, m_OperatController.getAButtonReleased());
   if (m_OperatController.getRightTriggerAxis() >= .5)Shoot = true;
@@ -154,7 +154,7 @@ public class Robot extends TimedRobot {
   m_Shooter.feed(Shoot, TAKE);
 
  m_Indexer.index();
- m_Indexer.COLLECT(m_OperatController.getRightBumper(), m_OperatController.getLeftBumper());
+ m_Indexer.COLLECT(m_OperatController.getRightBumper() || Shoot, m_OperatController.getLeftBumper());
  BALLCOLOR = m_Indexer.ColorSensor();
 
   m_Collector.COLLECT(m_OperatController.getLeftBumper(), m_OperatController.getRightBumper());

@@ -121,10 +121,10 @@ SmartDashboard.putBoolean("HARDSTOP", HARDSTOP);
 
 public void COLLECT(Boolean RUN, Boolean OTHER){
     if((RUN || IndexStatus)  && !HARDSTOP){
-        indexerWheel.set(-0.2);
+        indexerWheel.set(-0.5);
     }
     else if(OTHER){
-        indexerWheel.set(0.6);
+        indexerWheel.set(0.5);
     }
     else{
         indexerWheel.set(0);

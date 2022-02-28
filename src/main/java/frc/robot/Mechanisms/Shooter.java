@@ -45,24 +45,10 @@ public class Shooter {
 
 
 
-
-/*
-        m_rightMotor.config_kP(0, kP);
-        m_rightMotor.config_kI(0, kI);
-        m_rightMotor.config_kD(0, kD);
-        m_rightMotor.config_kF(0, kF);
-*/
-
-
         m_SlaveMotor.follow(m_MasterMotor);
         m_SlaveMotor.setInverted(true);
 
      
-
-        //m_leftMotor.follow(m_rightMotor);
-
-       // m_rightMotor.setInverted(true); will probably need to invert one of the motors. I want positive to be shooting forward for both
-
 
         m_feeder = new WPI_TalonSRX(12);
         m_feeder.configFactoryDefault();
@@ -104,34 +90,25 @@ public class Shooter {
 
         switch (mode) {
             case 0:
-                //m_rightMotor.set(TalonFXControlMode.PercentOutput, .35); //all values here are placeholders. Test to find actual velocities
                 m_MasterMotor.set(TalonFXControlMode.PercentOutput, .35);
                 break;
 
             case 90:
                 m_MasterMotor.set(TalonFXControlMode.Velocity, 1807);
-                //m_rightMotor.set(TalonFXControlMode.Velocity, 1807);
                 break;
             
             case 180:
-                //m_leftMotor.set(TalonFXControlMode.Velocity, speedForDistance());
-                //m_rightMotor.set(TalonFXControlMode.Velocity, speedForDistance());
-
-                //m_rightMotor.set(TalonFXControlMode.PercentOutput, .64); //all values here are placeholders. Test to find actual velocities
                 m_MasterMotor.set(TalonFXControlMode.PercentOutput, .64);
                 break;
             case 270:
                 m_MasterMotor.set(ControlMode.PercentOutput, 0.15);
-                //m_rightMotor.set(TalonFXControlMode.Velocity, 500);
                 break;
  
             case -1:
-                //m_rightMotor.set(ControlMode.PercentOutput, 0);
                 m_MasterMotor.set(ControlMode.PercentOutput, 0);
                 break;
 
             default:
-                //m_rightMotor.set(ControlMode.PercentOutput, 0);
                 m_MasterMotor.set(ControlMode.PercentOutput, 0);
                 break;
         }
