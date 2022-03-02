@@ -215,6 +215,7 @@ public class Robot extends TimedRobot {
   if (m_OperatController.getLeftTriggerAxis() >= .5)TAKE = true;
   else TAKE = false;
   m_Shooter.feed(Shoot, TAKE);
+  m_Shooter.postAmp();
 
  m_Indexer.index();
  m_Indexer.COLLECT(m_OperatController.getBButton() || Shoot, m_OperatController.getAButton());
