@@ -35,6 +35,7 @@ import frc.robot.Mechanisms.Drivetrain;
 import frc.robot.Mechanisms.Indexer;
 import frc.robot.Mechanisms.Shooter;
 import frc.robot.Systems.Auto;
+import frc.robot.Systems.BatteryMap;
 import frc.robot.Systems.Vision;
 
 
@@ -46,6 +47,7 @@ public class Robot extends TimedRobot {
   private final DoubleSolenoid m_climbSolenoid = new DoubleSolenoid(14, PneumaticsModuleType.REVPH, 5, 4);
    
 
+  public BatteryMap BattMap = new BatteryMap();
   public Drivetrain m_Drive = new Drivetrain();
   public Collector m_Collector = new Collector();
   public Indexer m_Indexer = new Indexer();
@@ -228,12 +230,17 @@ public class Robot extends TimedRobot {
 
   m_Compress.run(m_Compy);
 
-SmartDashboard.putString("Solenoid Value", m_doubleSolenoid.get().name());
+
+  BatteryMap.postInstantaneousAmps();
+  
+
   }
 
  
   @Override
-  public void disabledInit() {}
+  public void disabledInit() {
+    BatteryMap.postTotalAmps();
+  }
 
 
   @Override

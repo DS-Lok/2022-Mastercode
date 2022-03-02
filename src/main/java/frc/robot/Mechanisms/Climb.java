@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.Systems.BatteryMap;
 
 public class Climb {
     static boolean climbState;
@@ -36,7 +37,8 @@ public class Climb {
 
     public void readEncoder() {
         SmartDashboard.putNumber("Winch 1 encoder", winch1.getSelectedSensorPosition());
-        SmartDashboard.putNumber("Winch 2 encoder", winch2.getSelectedSensorPosition());        
+        SmartDashboard.putNumber("Winch 2 encoder", winch2.getSelectedSensorPosition());  
+            
     }
 
     public boolean climbEnabled(){
@@ -55,5 +57,6 @@ public class Climb {
         if(TOGGLE){
             SOLENOID.toggle();
         }
+        BatteryMap.climbValues(winch1, winch2, SOLENOID);  
     }
 }

@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Robot;
+import frc.robot.Systems.BatteryMap;
 
 public class Collector {
     
@@ -49,7 +50,7 @@ public class Collector {
     }
 
     public void dropped(boolean pistonsOut, boolean other, DoubleSolenoid m_doubleSolenoid) { //true is pistons out, false is not
-        
+        BatteryMap.collectValues(collectorMotor, m_doubleSolenoid);
         if (pistonsOut || other) {
             
             m_doubleSolenoid.toggle();;
@@ -67,6 +68,7 @@ public class Collector {
 
 
     public void COLLECT(Boolean Dump, Boolean Collect) {
+        
         if (Collect) {
             SmartDashboard.putBoolean("Collecting", Collect);
             collectorMotor.set(.3);

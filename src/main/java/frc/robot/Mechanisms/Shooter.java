@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Robot;
+import frc.robot.Systems.BatteryMap;
 import frc.robot.Systems.Vision;
 
 public class Shooter {
@@ -72,6 +73,10 @@ public class Shooter {
     }
 
 
+
+    public void postAmp(){
+        BatteryMap.shooterMotors(m_MasterMotor, m_FollowerMotor);
+    }
 
 
 

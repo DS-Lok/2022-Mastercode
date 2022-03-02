@@ -6,6 +6,7 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
+import frc.robot.Systems.BatteryMap;
 import frc.robot.Systems.Vision;
 
 public class Drivetrain {
@@ -75,6 +76,7 @@ public class Drivetrain {
       
       drive.arcadeDrive(speed, steering);
 
+      BatteryMap.driveTrainMotors(m_RightMotorFive, m_RightMotorSix, m_leftMotorOne, m_leftMotorTwo);
     }
 
     public void brake(Boolean braking){
