@@ -306,7 +306,7 @@ SmartDashboard.putString("Solenoid Value", m_doubleSolenoid.get().name());
           break;
       
       case 180:
-          if (7450 < ShooterSpeed && ShooterSpeed < 7550) {
+          if (7800 < ShooterSpeed && ShooterSpeed < 7900) {
             m_OperatController.setRumble(RumbleType.kLeftRumble, 0.5);
           } else {m_OperatController.setRumble(RumbleType.kLeftRumble, 0);
           }
