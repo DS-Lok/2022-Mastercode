@@ -70,6 +70,8 @@ if(match.color.equals(BLUE)){
     colorString = "Unimportant";
 }
 
+
+
 //Printing all values to the SmartDash
 SmartDashboard.putNumber("Red",detectedColor.red);
 SmartDashboard.putNumber("Blue", detectedColor.blue);
@@ -130,10 +132,12 @@ public void index(){
     if(BOTDETECTED && !TOPDETECTED){
         IndexStatus = true;
     }    
+     
     //When ball reaches top, cut indexer
     else if(TOPDETECTED){
         IndexStatus = false;
     }
+    
     
     //If a ball detected in both spots, cut the indexer
     if(BOTDETECTED && TOPDETECTED) HARDSTOP = true;

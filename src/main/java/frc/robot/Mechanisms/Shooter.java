@@ -75,7 +75,7 @@ public class Shooter {
 
 
 
-    public void flywheelRev(int mode, String BALLCOLOR, String ALLIANCE, Boolean DISABLECOMMAND, XboxController Rumble) { // Modes: 0 = straight against hub, 1 = pin shot, 2 = limelight assisted
+    public void flywheelRev(int mode, String BALLCOLOR, String ALLIANCE, Boolean DISABLECOMMAND) { // Modes: 0 = straight against hub, 1 = pin shot, 2 = limelight assisted
         SmartDashboard.putNumber("RightShooter", m_FollowerMotor.getSelectedSensorVelocity());
         SmartDashboard.putNumber("LeftShooter", m_MasterMotor.getSelectedSensorVelocity());
         SmartDashboard.putBoolean("AUTODUMP", AUTODUMPING);
@@ -93,29 +93,15 @@ public class Shooter {
         switch (mode) {
             case 0:
                 m_MasterMotor.set(TalonFXControlMode.Velocity, 5550);
-
-                if (5500 < m_MasterMotor.getSelectedSensorVelocity() && m_MasterMotor.getSelectedSensorVelocity() < 5600) {
-                    Rumble.setRumble(RumbleType.kLeftRumble, 0.5);
-                } else {Rumble.setRumble(RumbleType.kLeftRumble, 0);
-                }
-
                 break;
 
             case 90:
                 m_MasterMotor.set(TalonFXControlMode.Velocity, 5750);
-                if (5700 < m_MasterMotor.getSelectedSensorVelocity() && m_MasterMotor.getSelectedSensorVelocity() < 5800) {
-                    Rumble.setRumble(RumbleType.kLeftRumble, 0.5);
-                } else {Rumble.setRumble(RumbleType.kLeftRumble, 0);
-                }
                 break;
             
             case 180:
                 m_MasterMotor.set(TalonFXControlMode.Velocity, 7500);
-                if (7450 < m_MasterMotor.getSelectedSensorVelocity() && m_MasterMotor.getSelectedSensorVelocity() < 7550) {
-                    Rumble.setRumble(RumbleType.kLeftRumble, 0.5);
-                } else {Rumble.setRumble(RumbleType.kLeftRumble, 0);
-                }
-            break;
+                break;
             case 270:
                 m_MasterMotor.set(ControlMode.PercentOutput, 0.15);
                 break;

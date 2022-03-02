@@ -4,6 +4,15 @@
 
 package frc.robot;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+
+import javax.print.DocFlavor.STRING;
+
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.Compressor;
@@ -57,6 +66,21 @@ public class Robot extends TimedRobot {
   String BALLCOLOR;
 
   String ALLIANCE;
+  static Double ShooterSpeed;
+
+
+  //Ungly Ass Auto
+  int x; 
+  File XControl;
+  File YControl;
+  FileWriter XRecord;
+  FileWriter YRecord;
+  double xJoy;
+  double yJoy;
+  String xString;
+  String yString;
+  BufferedReader XlinReader;
+  BufferedReader YlinReader;
 
 
   @Override
@@ -83,15 +107,32 @@ public class Robot extends TimedRobot {
     m_doubleSolenoid.set(Value.kReverse);
     m_Compy = new Compressor(14, PneumaticsModuleType.REVPH);  
     //Climb.initClimb(false);
+
+    x = 0;
+    XControl = new File("/home/lvuser/Xpos.txt");
+    YControl = new File("/home/lvuser/Ypos.txt");
+
   }
 
 
   @Override
-  public void robotPeriodic() {}
+  public void robotPeriodic() {
+    ShooterSpeed = SmartDashboard.getNumber("LeftShooter", 0);
+
+  }
 
   @Override
   public void autonomousInit() {
     autoSection = 0;
+
+    try {
+      YlinReader = new BufferedReader(new FileReader(YControl));
+      XlinReader = new BufferedReader(new FileReader(XControl));
+
+    } catch (FileNotFoundException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
 
 
 
@@ -100,21 +141,40 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during autonomous. */
   @Override
   public void autonomousPeriodic() {
+    x++;
+
+    //if (x==252) {autoSection++;}
+
     switch (autoSection) {
       case 0:
+        try {
+          yString = YlinReader.readLine();
+          xString = XlinReader.readLine();
+          yJoy = Double.parseDouble(yString);
+          xJoy = Double.parseDouble(xString);
+          if (yJoy != 999) m_Drive.drive(yJoy, xJoy);
+          else if (yJoy == 999) {autoSection++;}
+        } catch (IOException e) {
+          // TODO Auto-generated catch block
+          autoSection = 1;
+          e.printStackTrace();
+        }
         //m_Drive.drive(Auto.readSequence("xInputTestAuto"), Auto.readSequence("yInputTestAuto"));
-        if (Auto.readSequence("xInputTestAuto") == 9999) {autoSection = 1;}
+        //if (Auto.readSequence("xInputTestAuto") == 9999) {autoSection = 1;}
         break;
       
       case 1:
         //m_Drive.target(Vision.AngleFromTarget(), 0);
-      //  m_shooter.flywheelRev(2);
-      //  if (m_indexer.empty()) {autoSection = 2;}
+        m_Collector.dropped(true, true, m_doubleSolenoid);
+        //  if (m_indexer.empty()) {autoSection = 2;}
         break;
 
       default:
         break;
     }
+
+    
+
   }
 
   
@@ -138,13 +198,16 @@ public class Robot extends TimedRobot {
   m_Drive.targetLime(m_DriveController.getLeftTriggerAxis() > .5);
   m_Vision.enableLimelight(m_DriveController.getLeftTriggerAxis() > .5);
   if(m_Indexer.getIndexStatus()) m_DriveController.setRumble(RumbleType.kLeftRumble, .1);
+  else if(!m_Indexer.getIndexStatus()) m_DriveController.setRumble(RumbleType.kLeftRumble, 0);
   if(m_DriveController.getYButtonReleased()) m_Indexer.setIndex();
 
 
 
 
   //Operator
-  m_Shooter.flywheelRev(m_OperatController.getPOV(), BALLCOLOR, ALLIANCE, m_OperatController.getXButtonReleased(), m_OperatController);
+  m_Shooter.flywheelRev(m_OperatController.getPOV(), BALLCOLOR, ALLIANCE, m_OperatController.getXButtonReleased());
+  Rumble(m_OperatController.getPOV());
+
   if (m_OperatController.getRightTriggerAxis() >= .5)Shoot = true;
   else Shoot = false;
   if (m_OperatController.getLeftTriggerAxis() >= .5)TAKE = true;
@@ -156,7 +219,7 @@ public class Robot extends TimedRobot {
  BALLCOLOR = m_Indexer.ColorSensor();
 
   m_Collector.COLLECT(m_OperatController.getAButton(), m_OperatController.getBButton());
-  m_Collector.dropped(m_OperatController.getBButton(), m_OperatController.getAButton(), m_doubleSolenoid);
+  m_Collector.dropped(m_OperatController.getRawButtonReleased(8), m_OperatController.getAButton(), m_doubleSolenoid);
   
   m_Climb.runWinch(m_OperatController.getLeftY());
   m_Climb.activatePiston(m_OperatController.getRawButtonReleased(7), m_climbSolenoid);
@@ -178,14 +241,89 @@ SmartDashboard.putString("Solenoid Value", m_doubleSolenoid.get().name());
 
 
   @Override
-  public void testInit() {}
+  public void testInit() {
+    XControl = new File("/home/lvuser/Xpos.txt");
+    YControl = new File("/home/lvuser/Ypos.txt");
+
+    try {
+      XRecord = new FileWriter(XControl);
+      YRecord = new FileWriter(YControl);
+
+    } catch (IOException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+
+  }
 
 
   @Override
   public void testPeriodic() {
-    
+
+
+
+    yJoy = m_DriveController.getLeftY();
+    xJoy = m_DriveController.getRightX();
    
+    yString = String.valueOf(yJoy) + "\n";
+    xString = String.valueOf(xJoy) + "\n";
+
+
+    try {
+      YRecord.append(yString);
+      YRecord.flush();
+      XRecord.append(xString);
+      XRecord.flush();
+
+    } catch (IOException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+  
+
+
+    m_Drive.drive(yJoy, xJoy);
+
 
   }
+
+
+  public void Rumble(int mode) {
+    switch (mode) {
+      case 0:
+          if (5500 < ShooterSpeed && ShooterSpeed < 5600) {
+            m_OperatController.setRumble(RumbleType.kLeftRumble, 0.5);
+          } else {m_OperatController.setRumble(RumbleType.kLeftRumble, 0);
+          }
+
+          break;
+
+      case 90:
+          if (5700 < ShooterSpeed && ShooterSpeed < 5800) {
+            m_OperatController.setRumble(RumbleType.kLeftRumble, 0.5);
+          } else {m_OperatController.setRumble(RumbleType.kLeftRumble, 0);
+          }
+          break;
+      
+      case 180:
+          if (7450 < ShooterSpeed && ShooterSpeed < 7550) {
+            m_OperatController.setRumble(RumbleType.kLeftRumble, 0.5);
+          } else {m_OperatController.setRumble(RumbleType.kLeftRumble, 0);
+          }
+      break;
+      case 270:
+          m_OperatController.setRumble(RumbleType.kLeftRumble, 0);
+          break;
+
+      case -1:
+          m_OperatController.setRumble(RumbleType.kLeftRumble, 0.0);
+          break;
+
+      default:
+          m_OperatController.setRumble(RumbleType.kLeftRumble, 0.0);
+          break;
+  }
+  }
+
 
 }

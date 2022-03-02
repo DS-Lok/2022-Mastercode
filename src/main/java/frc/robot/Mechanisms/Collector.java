@@ -52,27 +52,27 @@ public class Collector {
         
         if (pistonsOut || other) {
             
-            m_doubleSolenoid.set(Value.kForward);
-  
+            m_doubleSolenoid.toggle();;
+        }
             
 
             //possibly setting kOff will depresurize them and give them compressability?
-
+/*
         } else if (!pistonsOut || other) {
          // m_LeftPiston.set(Value.kReverse);
             //m_RightPiston.set(Value.kReverse);
             m_doubleSolenoid.set(Value.kReverse);
-        }
+        }*/
     } 
 
 
     public void COLLECT(Boolean Dump, Boolean Collect) {
         if (Collect) {
             SmartDashboard.putBoolean("Collecting", Collect);
-            collectorMotor.set(.4);
+            collectorMotor.set(.3);
         } else if (Dump) {
             
-            collectorMotor.set(ControlMode.PercentOutput,-.3);
+            collectorMotor.set(ControlMode.PercentOutput,-.2);
         }
         else{
             SmartDashboard.putBoolean("Collecting", Collect);
