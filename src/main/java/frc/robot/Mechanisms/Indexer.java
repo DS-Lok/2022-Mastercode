@@ -85,7 +85,9 @@ public void setIndex(){
     IndexStatus = false;
 }
 
-
+public boolean getIndexStatus(){
+    return IndexStatus;
+}
 
 
 

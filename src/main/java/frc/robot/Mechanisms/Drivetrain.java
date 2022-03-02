@@ -3,6 +3,7 @@ package frc.robot.Mechanisms;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import frc.robot.Systems.Vision;
@@ -104,7 +105,6 @@ public class Drivetrain {
       manualSteering = !On;
       if (On) {
         steering = Vision.AngleFromTarget() * limeSteerCoefficient;
-        
       }
     }
 

@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Climb {
     static boolean climbState;
@@ -17,6 +18,8 @@ public class Climb {
     DoubleSolenoid bigClimbPiston = new DoubleSolenoid(PneumaticsModuleType.REVPH, 0, 0);
     WPI_TalonFX winch1 = new WPI_TalonFX(9);
     WPI_TalonFX winch2 = new WPI_TalonFX(10);
+    int UpperLimit = 18000;
+    int LowerLimit = -18000;
     
 
     public Climb(){
@@ -25,9 +28,17 @@ public class Climb {
 
         winch1.setNeutralMode(NeutralMode.Brake);
         winch2.setNeutralMode(NeutralMode.Brake);
-
+        
 
     }
+
+
+
+    public void readEncoder() {
+        SmartDashboard.putNumber("Winch 1 encoder", winch1.getSelectedSensorPosition());
+        SmartDashboard.putNumber("Winch 2 encoder", winch2.getSelectedSensorPosition());        
+    }
+
     public boolean climbEnabled(){
         return climbState;
     }
@@ -36,7 +47,9 @@ public class Climb {
     }
 
     public void runWinch(Double joyOut){
-        winch1.set(ControlMode.PercentOutput, joyOut *.3);
+        if(winch1.getSelectedSensorPosition() != UpperLimit && winch1.getSelectedSensorPosition() != LowerLimit) winch1.set(ControlMode.PercentOutput, joyOut *.3);
+        else winch1.set(ControlMode.PercentOutput, 0);
+        
     }
     public void activatePiston(Boolean TOGGLE, DoubleSolenoid SOLENOID){
         if(TOGGLE){
