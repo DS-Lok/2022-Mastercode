@@ -22,9 +22,9 @@ public class Shooter {
     WPI_TalonFX m_FollowerMotor;
     WPI_TalonSRX m_feeder;
 
-    double kP = 0.15;
+    double kP = 0.18;
     double kI = 0.001;
-    double kD = 5;
+    double kD = 8;
     double kF = .025;
 
 
@@ -105,7 +105,7 @@ public class Shooter {
                 break;
             
             case 180:
-                m_MasterMotor.set(TalonFXControlMode.Velocity, 7500);
+                m_MasterMotor.set(TalonFXControlMode.Velocity, 7850);
                 break;
             case 270:
                 m_MasterMotor.set(ControlMode.PercentOutput, 0.15);
