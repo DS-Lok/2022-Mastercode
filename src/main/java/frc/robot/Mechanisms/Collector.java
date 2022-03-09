@@ -50,7 +50,7 @@ public class Collector {
     }
 
     public void dropped(boolean pistonsOut, boolean other, DoubleSolenoid m_doubleSolenoid) { //true is pistons out, false is not
-        BatteryMap.collectValues(collectorMotor, m_doubleSolenoid);
+        
         if (pistonsOut || other) {
             
             m_doubleSolenoid.toggle();;
@@ -68,10 +68,10 @@ public class Collector {
 
 
     public void COLLECT(Boolean Dump, Boolean Collect) {
-        
+        BatteryMap.collectValues(collectorMotor, Collect);
         if (Collect) {
             SmartDashboard.putBoolean("Collecting", Collect);
-            collectorMotor.set(.3);
+            collectorMotor.set(.35);
         } else if (Dump) {
             
             collectorMotor.set(ControlMode.PercentOutput,-.2);

@@ -14,13 +14,13 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Systems.BatteryMap;
 
 public class Climb {
-    static boolean climbState;
+    static int climbState = 0;
     boolean hooked = false;
     DoubleSolenoid bigClimbPiston = new DoubleSolenoid(PneumaticsModuleType.REVPH, 0, 0);
     WPI_TalonFX winch1 = new WPI_TalonFX(9);
     WPI_TalonFX winch2 = new WPI_TalonFX(10);
     int UpperLimit = 18000;
-    int LowerLimit = -18000;
+    int LowerLimit = -180000;
     
 
     public Climb(){
@@ -38,25 +38,74 @@ public class Climb {
     public void readEncoder() {
         SmartDashboard.putNumber("Winch 1 encoder", winch1.getSelectedSensorPosition());
         SmartDashboard.putNumber("Winch 2 encoder", winch2.getSelectedSensorPosition());  
-            
     }
 
-    public boolean climbEnabled(){
-        return climbState;
-    }
     public static void initClimb(boolean setFalse){
-        climbState = false;
+       
     }
 
     public void runWinch(Double joyOut){
-        if(winch1.getSelectedSensorPosition() != UpperLimit && winch1.getSelectedSensorPosition() != LowerLimit) winch1.set(ControlMode.PercentOutput, joyOut *.3);
-        else winch1.set(ControlMode.PercentOutput, 0);
-        
+        winch1.set(ControlMode.PercentOutput, joyOut *.5);
     }
-    public void activatePiston(Boolean TOGGLE, DoubleSolenoid SOLENOID){
+    public void activatePiston(boolean TOGGLE, DoubleSolenoid SOLENOID){
         if(TOGGLE){
             SOLENOID.toggle();
         }
         BatteryMap.climbValues(winch1, winch2, SOLENOID);  
     }
+
+
+    public void nextRung(boolean on, DoubleSolenoid climbSolenoid){
+        SmartDashboard.putNumber("Climb State", climbState);
+        if(on)climbState = 1;
+        int x = 0;
+        if(winch1.getSelectedSensorPosition() < UpperLimit || 
+        winch2.getSelectedSensorPosition() < UpperLimit && climbState == 1){
+
+            winch1.set(ControlMode.PercentOutput, .3);
+        }
+
+
+
+        else if(winch1.getSelectedSensorPosition() > UpperLimit || winch2.getSelectedSensorPosition() > UpperLimit && climbState == 1) climbState = 2;
+        
+        
+        
+        if(climbState == 2){
+
+        winch1.set(ControlMode.PercentOutput, 0);
+        climbSolenoid.set(Value.kForward);
+        climbState = 3;
+    }
+
+
+
+        if(climbState ==3 && x != 20){
+            x++;
+        }
+
+
+
+        else if(climbState ==3 & x == 20)climbState =4;
+
+
+        if(climbState ==4 && winch1.getSelectedSensorPosition() > LowerLimit 
+        || winch2.getSelectedSensorPosition() > LowerLimit){
+
+            winch1.set(ControlMode.PercentOutput, -.3);
+            climbSolenoid.set(Value.kReverse);
+        }
+        
+        
+        else if(climbState == 4 && winch1.getSelectedSensorPosition() < LowerLimit 
+        || winch2.getSelectedSensorPosition() < LowerLimit){
+
+            winch1.set(ControlMode.PercentOutput, 0);
+            climbState = 0;
+        }
+    
+    
+    }
 }
+
+

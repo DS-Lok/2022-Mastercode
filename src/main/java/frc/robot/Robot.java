@@ -13,6 +13,10 @@ import java.io.IOException;
 
 import javax.print.DocFlavor.STRING;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
+
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.Compressor;
@@ -26,6 +30,8 @@ import edu.wpi.first.wpilibj.Ultrasonic;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
+import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Mechanisms.Climb;
@@ -71,6 +77,12 @@ public class Robot extends TimedRobot {
   static Double ShooterSpeed;
 
 
+  
+  public static double steering;
+  public static boolean manualSteering;
+
+  public boolean neutralMode = true;
+
   //Ungly Ass Auto
   int x; 
   File XControl;
@@ -84,12 +96,16 @@ public class Robot extends TimedRobot {
   BufferedReader XlinReader;
   BufferedReader YlinReader;
 
+  
 
   @Override
   public void robotInit() {
     NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setNumber(3);;
     //teamColor = DriverStation.getAlliance().name();
     //SmartDashboard.putString("Team", teamColor);
+
+   
+
 
     SmartDashboard.putNumber("Hl", 0);
     SmartDashboard.putNumber("Sl", 3);
@@ -182,27 +198,30 @@ public class Robot extends TimedRobot {
   
   @Override
   public void teleopInit() {
+
     m_Collector.dropped(false, false, m_doubleSolenoid);
     ALLIANCE = DriverStation.getAlliance().name();
     SmartDashboard.putString("Alliance", ALLIANCE);
     m_Indexer.setIndex();
-
-
-    NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setNumber(0);
   }
 
   @Override
   public void teleopPeriodic() {
-    
+   
+    //drive.arcadeDrive(m_DriveController.getLeftY(), m_DriveController.getRightX());
+
   //Driver
   m_Drive.drive(m_DriveController.getLeftY(), m_DriveController.getRightX());
-  m_Drive.brake(m_DriveController.getAButton());
+  m_Drive.brake(m_DriveController.getAButtonReleased());
   m_Drive.targetLime(m_DriveController.getLeftTriggerAxis() > .5);
   m_Vision.enableLimelight(m_DriveController.getLeftTriggerAxis() > .5);
-  if(m_Indexer.getIndexStatus()) m_DriveController.setRumble(RumbleType.kLeftRumble, .1);
-  else if(!m_Indexer.getIndexStatus()) m_DriveController.setRumble(RumbleType.kLeftRumble, 0);
+  //if(m_Indexer.getIndexStatus()) m_DriveController.setRumble(RumbleType.kLeftRumble, .1);
+  //else if(!m_Indexer.getIndexStatus()) m_DriveController.setRumble(RumbleType.kLeftRumble, 0);
   if(m_DriveController.getYButtonReleased()) m_Indexer.setIndex();
-
+  //Ready to shoot
+  if(m_DriveController.getRightBumper()) m_OperatController.setRumble(RumbleType.kRightRumble, 0.1);
+  else m_OperatController.setRumble(RumbleType.kRightRumble, 0);
+  m_Drive.driveHalf(m_DriveController.getLeftBumper(), m_DriveController.getRightBumper());
 
 
 
@@ -215,7 +234,7 @@ public class Robot extends TimedRobot {
   if (m_OperatController.getLeftTriggerAxis() >= .5)TAKE = true;
   else TAKE = false;
   m_Shooter.feed(Shoot, TAKE);
-  m_Shooter.postAmp();
+  m_Shooter.postAmp(m_OperatController.getPOV() >= 0);
 
  m_Indexer.index();
  m_Indexer.COLLECT(m_OperatController.getBButton() || Shoot, m_OperatController.getAButton());
@@ -232,8 +251,31 @@ public class Robot extends TimedRobot {
   m_Compress.run(m_Compy);
 
 
+  //if (m_OperatController.getRawButtonReleased(8)) {m_Compy.enableDigital();}
+  if (m_OperatController.getRightStickButtonReleased()) {m_Compy.disable();}
+
   BatteryMap.postInstantaneousAmps();
-  
+  BatteryMap.postAverageAmps();
+
+
+
+
+  yJoy = m_OperatController.getLeftY();
+boolean test = m_OperatController.getRawButtonReleased(7);
+    yString = String.valueOf(yJoy) + "\n";
+    xString = String.valueOf(test) + "\n";
+
+
+    try {
+      YRecord.append(yString);
+      YRecord.flush();
+      XRecord.append(xString);
+      XRecord.flush();
+
+    } catch (IOException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
 
   }
 
@@ -289,7 +331,6 @@ public class Robot extends TimedRobot {
     }
   
 
-
     m_Drive.drive(yJoy, xJoy);
 
 
@@ -299,7 +340,9 @@ public class Robot extends TimedRobot {
   public void Rumble(int mode) {
     switch (mode) {
       case 0:
-          if (5500 < ShooterSpeed && ShooterSpeed < 5600) {
+          //if (5500 < ShooterSpeed && ShooterSpeed < 5600) {
+          if (5450 < ShooterSpeed && ShooterSpeed < 5550) {
+
             m_OperatController.setRumble(RumbleType.kLeftRumble, 0.5);
           } else {m_OperatController.setRumble(RumbleType.kLeftRumble, 0);
           }

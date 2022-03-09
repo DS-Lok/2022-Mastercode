@@ -2,6 +2,7 @@ package frc.robot.Mechanisms;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
@@ -26,6 +27,13 @@ public class Shooter {
     double kI = 0.001;
     double kD = 8;
     double kF = .025;
+    
+    /*
+    double kP = 0.1;
+    double kI = 0.001;
+    double kD = 5;
+    double kF = .025;
+*/ 
 
 
     public Shooter() {
@@ -47,7 +55,7 @@ public class Shooter {
         m_MasterMotor.configPeakOutputReverse(-1);
 
 
-
+        m_FollowerMotor.setNeutralMode(NeutralMode.Coast);
         m_FollowerMotor.follow(m_MasterMotor);
         m_FollowerMotor.setInverted(true);
 
@@ -74,8 +82,8 @@ public class Shooter {
 
 
 
-    public void postAmp(){
-        BatteryMap.shooterMotors(m_MasterMotor, m_FollowerMotor);
+    public void postAmp(boolean on){
+        BatteryMap.shooterMotors(m_MasterMotor, m_FollowerMotor, on);
     }
 
 
@@ -97,10 +105,10 @@ public class Shooter {
 
         switch (mode) {
             case 0:
-                m_MasterMotor.set(TalonFXControlMode.Velocity, 5550);
-                break;
+                //m_MasterMotor.set(TalonFXControlMode.Velocity, 5550);
+                m_MasterMotor.set(TalonFXControlMode.Velocity, 5500);                break;
 
-            case 90:
+            case 90: 
                 m_MasterMotor.set(TalonFXControlMode.Velocity, 5750);
                 break;
             
